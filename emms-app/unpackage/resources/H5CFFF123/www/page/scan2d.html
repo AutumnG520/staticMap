@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>Hello H5+</title>
+		<script src="../js/mui.min.js"></script>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script src="../js/base64.min.js"></script>
+		<script type="text/javascript">
+			var ws = null,
+				wo = null;
+			var scan = null,
+				domready = false,
+				bCancel = false,
+				types = '';
+			// H5 plus事件处理
+			function plusReady() {
+				if(ws || !window.plus || !domready) {
+					return;
+				}
+
+				localUrl = plus.storage.getItem('youranLocalUrl');
+
+				// 获取窗口对象
+				ws = plus.webview.currentWebview();
+				types = ws.type;
+				wo = ws.opener();
+				// 开始扫描
+				ws.addEventListener('show', function() {
+					scan = new plus.barcode.Barcode('bcid', [plus.barcode.QR, plus.barcode.EAN8, plus.barcode.EAN13], {
+						frameColor: '#00FF00',
+						scanbarColor: '#00FF00'
+					});
+					scan.onmarked = onmarked;
+					scan.start({
+						conserve: true,
+						filename: '_doc/barcode/'
+					});
+				});
+				// 显示页面并关闭等待框
+				ws.show('pop-in');
+				//  wo.evalJS('closeWaiting()');
+			}
+			if(window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener('plusready', plusReady, false);
+			}
+			// 监听DOMContentLoaded事件
+			document.addEventListener('DOMContentLoaded', function() {
+				domready = true;
+				plusReady();
+			}, false);
+			// 二维码扫描成功
+			function onmarked(type, result, file) {
+				switch(type) {
+					case plus.barcode.QR:
+						type = 'QR';
+						break;
+					case plus.barcode.EAN13:
+						type = 'EAN13';
+						break;
+					case plus.barcode.EAN8:
+						type = 'EAN8';
+						break;
+					default:
+						type = '其它' + type;
+						break;
+				}
+				result = result.replace(/\n/g, '');
+				var newResult = Base64.decode(result);
+				var obj = JSON.parse(newResult);
+
+				if(types == 'detail') {
+					if(obj.tp == 0) {
+						mui.toast('您当前扫描的是设备');
+						return;
+					}
+					mui.openWindow({
+						id: 'bjDetail',
+						url: 'bjDetail.html',
+						extras: {
+							cd: result,
+							type: '2d'
+						},
+						styles: {
+							popGesture: "close"
+						},
+					});
+				} else if(types == 'put') {
+					if(obj.tp == 0) {
+						mui.toast('您当前扫描的是设备');
+						return;
+					}
+					mui.openWindow({
+						id: 'bjDetail',
+						url: 'bjDetail.html',
+						extras: {
+							cd: result,
+							type: 'put'
+						}
+					});
+				} else if(types == 'task') {
+					if(obj.tp == 1) {
+						mui.toast('您当前扫描的是备件');
+						return;
+					}
+					var newObj = {
+						isChild: 1,
+						id: obj.id
+					}
+					var newBaseObj = Base64.encode(JSON.stringify(newObj));
+					mui.openWindow({
+						id: 'rwContent',
+						url: 'rwContent.html',
+						extras: {
+							cd: newBaseObj,
+							type: 'task'
+						},
+						styles: {
+							popGesture: "close"
+						},
+					});
+				} else if(types == 'maintain') {
+					if(obj.tp == 1) {
+						mui.toast('您当前扫描的是备件');
+						return;
+					}
+
+					equipName(obj.id, function(name) {
+						mui.openWindow({
+							id: 'add.html',
+							url: 'add.html',
+							extras: {
+								cd: obj.id,
+								type: 'maintain',
+								name: name
+							},
+							styles: {
+								popGesture: "close"
+							},
+						});
+					});
+
+				}
+
+				//				ws.close();
+				//  wo.evalJS("scaned('"+ type +"','"+ result +"','"+ file +"');");
+				//				back();
+			}
+			// 从相册中选择二维码图片 
+			function scanSwitch() {
+				if(bCancel) {
+					scan.start({
+						conserve: true,
+						filename: '_doc/barcode/'
+					});
+					btCancel && (btCancel.innerText = '暂　停');
+				} else {
+					scan.cancel();
+					btCancel && (btCancel.innerText = '开　始');
+				}
+				bCancel = !bCancel;
+			}
+
+			function equipName(id, callback) {
+				var token=plus.storage.getItem("token")
+				var p1 = {
+					id: id,
+					type: "-1"
+				};
+				mui.ajax(localUrl + '/api/equipment/detail', {
+					data: p1,
+					dataType: 'json',
+					type: 'get',
+					beforeSend: function (XMLHttpRequest){
+						XMLHttpRequest.setRequestHeader("Authorization", token);
+					},
+					success: function(data) {
+						if(data.code == 0) {
+							callback(data.data.equipDetail.jsonDoc.basicInfo.nameCn);
+						} else {
+							mui.toast('错误')
+						}
+					},
+					error: function(err) {
+						//							wt.close();
+						mui.toast('错误')
+						console.log(err)
+					}
+				})
+
+			}
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+		<style type="text/css">
+			#bcid {
+				width: 100%;
+				position: absolute;
+				top: 0px;
+				bottom: 44px;
+				text-align: center;
+			}
+			
+			.tip {
+				color: #FFFFFF;
+				font-weight: bold;
+				text-shadow: 0px -1px #103E5C;
+			}
+			
+			footer {
+				width: 100%;
+				height: 44px;
+				position: absolute;
+				bottom: 0px;
+				line-height: 44px;
+				text-align: center;
+				color: #FFF;
+			}
+			
+			.fbt {
+				width: 50%;
+				height: 100%;
+				background-color: #F0F0F0;
+				float: left;
+				color: #000;
+			}
+			
+			.fbt:active {
+				-webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.5);
+				box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.5);
+			}
+		</style>
+	</head>
+
+	<body style="background-color: #000000;">
+		<div id="bcid">
+			<div style="height:40%"></div>
+			<p class="tip">...载入中...</p>
+		</div>
+		<footer>
+			<div class="fbt" onclick="back()">取　消</div>
+			<div id="btCancel" class="fbt" onclick="scanSwitch()">暂　停</div>
+		</footer>
+	</body>
+
+</html>

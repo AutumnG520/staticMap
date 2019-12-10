@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>我的</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="css/mui.min.css">
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			
+			.title {
+				margin: 20px 15px 10px;
+				color: #6d6d72;
+				font-size: 15px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">设置</h1>
+		</header>-->
+		<div class="mui-content">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right userName" href="page/ctactDetails.html">
+						管理员
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right" href="page/messageSetting.html">
+						消息设置
+					</a>
+				</li>
+
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right" href="page/otherSetting.html">
+						其他设置
+					</a>
+				</li>
+			</ul>
+			<ul class="mui-table-view" style="margin-top: 25px;">
+				<li class="mui-table-view-cell">
+					<a class="logOut" style="text-align: center;color: #FF3B30;">
+						注销
+					</a>
+				</li>
+			</ul>
+		</div>
+		</style>
+	</body>
+	<script src="js/mui.min.js"></script>
+	<script>
+		mui.init({
+			swipeBack: true //启用右滑关闭功能
+		});
+		//		document.getElementById("about").addEventListener('tap',function () {
+		//			//获得主页面的webview
+		//			var main = plus.webview.currentWebview().parent();
+		//			//触发主页面的gohome事件
+		//			mui.fire(main,'gohome');
+		//		});
+		
+		
+		
+		
+		mui.plusReady(function() {
+			//获取用户名
+			var name = plus.storage.getItem('uid')
+			document.querySelector('.userName').innerHTML = name;
+			mui('.mui-content').on('tap', 'a', function() {
+				var href = this.getAttribute('href');
+
+				//非plus环境，直接走href跳转
+				if(!mui.os.plus) {
+					location.href = href;
+					return;
+				}
+
+				var id = this.getAttribute("data-wid");
+				if(!id) {
+					id = href;
+				}
+				var uid= plus.storage.getItem('uid');
+//				var type = this.getAttribute('type')
+				if(href && ~href.indexOf('.html')) {
+					//打开窗口的相关参数
+					var options = {
+						styles: {
+							popGesture: "close"
+						},
+						extras: {
+							uid: uid
+						}
+					};
+					//如下场景不适用下拉回弹：
+					//1、单webview下拉刷新；2、底部有fixed定位的div的页面
+
+					//图标页面需要启动硬件加速
+
+					//非原生导航，需要设置顶部状态栏占位
+					options.styles.statusbar = {
+						background: "#f7f7f7"
+					}
+
+					if(id && id == "viewgroup") { //强制启用截屏
+						options.extras.acceleration = "capture";
+					}
+					//打开新窗口
+					mui.openWindow(href, id, options);
+				}
+			});
+			
+			
+			document.querySelector('.logOut').addEventListener('tap',function(){
+				var localUrl = plus.storage.getItem('youranLocalUrl');
+				
+				var nwaiting = plus.nativeUI.showWaiting();
+				// plus.storage.setItem('uid', '');
+				// plus.storage.setItem('pwd', '');
+				// mui.ajax(localUrl + '/users/logout?', {
+//					data: p1,
+					// dataType: 'json',
+					// type: 'get',
+					// success: function(data) {
+						nwaiting.close();
+						plus.storage.removeItem('autoLogin');
+						plus.storage.removeItem("token")
+						plus.runtime.restart();				
+					// },
+					// error: function(err) {
+						// nwaiting.close();
+						// console.log(err)
+					// }
+				// })
+			
+				
+			})
+			
+		});
+	</script>
+
+</html>

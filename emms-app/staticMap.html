@@ -1,0 +1,49 @@
+<DOCTYPE html>
+<html>
+  <head>
+    <title>aasd</title>
+<!--     <link rel="stylesheet" href="../css/ol.css" type="text/css"> -->
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+<!--     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script> -->
+<!--     <script src="../js/ol.js"></script> -->
+<style>
+	.map{
+		height: 500px;
+		width:100%;
+	}
+</style>
+  </head>
+  <body>
+    <div id="map" class="map"></div>
+  </body>
+</html>
+<script type="text/javascript" src="js/ol.js"></script>
+   <script>
+      var extent = [0, 0, 418, 600];
+		console.log(ol)
+      var projection = new ol.proj.Projection({
+        code: 'xkcd-image',
+        units: 'pixels',
+        extent: extent
+      });
+
+
+      var map = new ol.Map({
+        layers: [
+          new ol.layer.Image({
+            source: new ol.source.ImageStatic({
+              url: './images/timg.jpg',//这里添加静态图片的地址
+              projection: projection,
+              imageExtent: extent
+            })
+          })
+        ],
+        target: 'map',
+        view: new ol.View({
+          projection: projection,
+          center: ol.extent.getCenter(extent),
+          zoom: 2,
+          maxZoom: 8
+        })
+      });
+    </script>

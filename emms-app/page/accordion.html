@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>类树界面</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<style>
+			div,
+			ul,
+			li {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+			
+			.wlh-li {
+				position: relative;
+				margin-top: 10px;
+				padding-left: 20px;
+				background: #FFF;
+				border-top: .5px solid #AAA;
+				box-shadow: 0px 1px 1px 1px #CCC;
+				overflow: hidden;
+			}
+			
+			.wlh-li .wlh-li {
+				margin: 0;
+				border-bottom: none;
+				box-shadow: none;
+			}
+			
+			.wlh-p {
+				position: relative;
+				padding: 10px;
+				color: #000;
+				margin: 0;
+				font-size: 18px;
+			}
+			
+			.wlh-xiala {
+				margin-right: 10px;
+				float: right;
+				height: 20px;
+			}
+			
+			.wlh-li ul {
+				height: 0px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-conent">
+			<ul class="wlh-conent">
+			</ul>
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script>
+		if(window.plus) {
+			plusReady();
+		} else {
+			document.addEventListener('plusready', plusReady, false);
+		}
+
+		function plusReady() {
+			mui.init({
+				gestureConfig: {
+					doubletap: true
+				},
+				swipeBack:true
+			});
+			localUrl = plus.storage.getItem('youranLocalUrl');
+			uid = plus.storage.getItem('uid');
+			wt = plus.nativeUI.showWaiting();
+			getEquipData();
+		}
+
+		//获取设备数据
+		function getEquipData() {
+			var token=plus.storage.getItem("token")
+			var p1 = {
+				level: '4',
+			};
+			mui.ajax(localUrl + '/api/equipment/tree', {
+				data: p1,
+				dataType: 'json',
+				type: 'get',
+				beforeSend: function (XMLHttpRequest){
+					XMLHttpRequest.setRequestHeader("Authorization", token);
+				},
+				success: function(data) {
+					// console.log(data.data)
+					if(data.code ==='0'){
+						if(data.data.children.length !== 0){						
+							var str = addStr(data.data.children);
+							document.querySelector('.wlh-conent').innerHTML = str;
+						}else{
+							document.querySelector('.wlh-conent').innerHTML = '<li style="text-align: center;margin-top:20px">没有设备可供选择</li>';
+						}
+						wt.close();
+						clickEvent();
+				}},
+				error: function(err) {
+					wt.close();
+					console.log(err);
+				}
+			})
+		}
+
+		function addStr(data) {
+			var str = '';
+			data.map(function(v, k) {
+				if(v.children.length === 0) {
+					str += '<li class="wlh-li" data-name="' + v.jsonDoc.basicInfo.nameCn + '" data-id="' + v.id + '"><p class="wlh-p">' + v.jsonDoc.basicInfo.nameCn + '</p></li>';
+				} else {
+					var newStr = addStr(v.children);
+					str += '<li class="wlh-li" data-name="' + v.jsonDoc.basicInfo.nameCn + '" data-id="' + v.id + '"><p class="wlh-p">' + v.jsonDoc.basicInfo.nameCn + '<img class="wlh-xiala" src="../images/xiala.png" alt="" /></p><ul>' + newStr + '</ul></li>';
+				}
+			})
+			return str;
+
+		}
+
+		function clickEvent() {
+			document.querySelectorAll('.wlh-li').forEach(function(v, k) {
+				v.addEventListener('tap', function(e) {
+					var down = this.querySelector('.wlh-xiala'),
+						downUl = this.querySelector('ul');
+					if(downUl) {
+						var downHeight = downUl.style.height;
+						if(downHeight == 'auto') {
+							down.style = 'transform:rotate(0deg);';
+							downUl.style.height = '0px';
+						} else {
+							down.style = 'transform:rotate(180deg);';
+							downUl.style.height = 'auto';
+						}
+					}
+					//阻止冒泡
+					e.stopPropagation();
+				})
+			})
+
+			document.querySelectorAll('.wlh-li').forEach(function(v, k) {
+				v.addEventListener('doubletap', function(e) {
+					var addHtml = plus.webview.getWebviewById('add.html'),
+						name = this.getAttribute('data-name'),
+						id = this.getAttribute('data-id');
+					addHtml.evalJS("accordion('" + name +","+ id + "')");
+					mui.back();
+					e.stopPropagation();
+				})
+			})
+
+		}
+	</script>
+
+</html>

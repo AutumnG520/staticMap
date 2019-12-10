@@ -1,0 +1,262 @@
+<!DOCTYPE htmlutou
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>MUI</title>
+		<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+		<style type="text/css">
+			html, body {
+				height: 100%;
+				width: 100%;
+				background-color: #4477ff;
+			}
+			.btn-wrap {
+				width: 100%;
+				box-sizing: border-box;
+				text-align: center;
+				margin-top: 15px;
+
+			}
+			.login-btn {
+				width: 200px;
+				height: 36px;
+				border-radius: 20px;
+				background-color: greenyellow;
+				border: none;
+				outline: none;
+				color: #fff;
+				font-size: 16px;
+			}
+			.mui-input-row {
+				width: 70%;
+				border-bottom: 1px solid #000;
+				margin-left: 15%;
+				margin-top: 15px;
+			}
+			.mui-input-row label {
+				color: #fff;
+				font-size: 14px;
+			}
+			.mui-input-row input {
+				color: #fff;
+				font-size: 14px;
+			}
+			.mui-input-row.mui-checkbox {
+				width: 70%;
+				border-bottom: none;
+				margin-left: 15%;
+				margin-top: 20px;
+			}
+			.mui-input-row.mui-checkbox label{
+				padding-left: 40px;
+				font-size: 14px;
+				color: #fff;
+			}
+			.mui-input-row.mui-checkbox .auto-login{
+				left: 0 !important;
+			}
+			.mui-checkbox input[type=checkbox]:checked:before, .mui-radio input[type=radio]:checked:before {
+			    color: orange;
+			}
+			.mui-input-row .mui-input-clear~.mui-icon-clear.mui-active, .mui-input-row .mui-input-password~.mui-icon-eye.mui-active, .mui-input-row .mui-input-speech~.mui-icon-speech.mui-active {
+			    color: orange;
+			}
+			
+			.logo-wrap {
+				padding: 35px 0 20px;
+				text-align: center;
+			}
+			.logo-wrap .login-logo {
+				margin: 10px auto;
+				width: 50px;
+				height: 50px;
+				background-image: url("images/logo.png");
+				background-size: 100% 100%;
+			}
+			.logo-wrap .title {
+				color: #fff;
+			}
+			
+			.child-input-focus {
+				border-bottom: 1px solid red;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="logo-wrap">
+			<div class="login-logo"></div>
+			<label class="title">精细化设备管理平台</label>
+		</div>
+		<div class="form-wrap">
+		    <div class="mui-input-row uid-wrap">
+		        <label>用户名</label>
+		    <input type="text" class="mui-input-clear" placeholder="请输入用户名" name="uid" id="uid">
+		    </div>
+		    <div class="mui-input-row pwd-wrap">
+		        <label>密码</label>
+		        <input type="password" class="mui-input-password" placeholder="请输入密码" name="pwd" id="pwd">
+		    </div>
+		    <div class="mui-input-row mui-checkbox mui-left">
+				<label>自动登录</label>
+				<input class="auto-login" name="auto-login" type="checkbox" id="auto-login">
+			</div>
+			<div class="btn-wrap">
+		    	<button type="button" class="login-btn" id="login-btn">登录</button>
+		    </div>
+		</div>
+	</body>
+	<script src="js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/md5.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		function ajaxLogin (uid, pwd) {
+
+			// var pwd = md5(pwd)
+			
+			// var param = {
+			// 	loginName:uid,
+			// 	password:md5Pwd,
+			// }
+			mui.ajax(localUrl+'/login', {
+				type: 'post',
+				dataType: 'json',
+				contentType:'application/json',
+				data: {
+					cmd: 0x01,
+					// param: param,
+					loginName:uid,
+					password:pwd,
+				},
+				headers: {'Access-Control-Allow-Origin': '*'},
+				success: function (data) { 
+					// console.log(data)
+					if (data.code === '0') {
+						loginSuccess(data, uid, pwd)
+					} else {
+						loginFaild(data.code)
+					}
+				},
+				error: function (xhr, type, errorThrown) {	
+					loginFaild()
+				}
+			})
+		}
+		
+		function loginSuccess (data, uid, pwd) {
+			// console.log(data.data.token)
+			plus.storage.setItem('token',data.data.token);
+			plus.storage.setItem('uid', uid);
+			plus.storage.setItem('pwd', pwd);
+			// console.log(plus.storage.getItem('token'))
+			for (var k in data) {
+				plus.storage.setItem(k, data[k])
+			}
+			mui.openWindow({
+			    url: 'index.html', 
+			    id:'index'
+		  	});
+		}
+		function loginFaild (type) {
+			if (type === '11') {
+				mui.alert('账号密码错误')
+			} else {
+				mui.alert('登录失败')
+			}
+		}
+		
+		function tapLoginBtn () {
+			var uid = document.getElementById('uid').value
+			var pwd = document.getElementById('pwd').value
+			
+			
+			// 表单验证
+			if (!uid || uid.trim() === '') {
+				mui.alert('用户名不能为空！')
+				return false
+			}
+			if (!pwd || pwd.trim() === '') {
+				mui.alert('密码不能为空！')
+				return false
+			}
+			ajaxLogin(uid, pwd)
+		}
+		
+		function addDomEvent () {
+			// 添加uid输入框的焦点相关事件
+			var uidIpt = document.getElementById('uid')
+			var uidWrap = document.querySelector('.uid-wrap')
+			uidIpt.addEventListener('focus', function () {
+				uidWrap.classList.add('child-input-focus')
+			})
+			uidIpt.addEventListener('blur', function () {
+				uidWrap.classList.remove('child-input-focus')
+			})
+			
+			// 添加pwd输入框的焦点相关事件
+			var pwdIpt = document.getElementById('pwd')
+			var pwdWrap = document.querySelector('.pwd-wrap')
+			pwdIpt.addEventListener('focus', function () {
+				pwdWrap.classList.add('child-input-focus')
+			})
+			pwdIpt.addEventListener('blur', function () {
+				pwdWrap.classList.remove('child-input-focus')
+			})
+			
+			// 添加登录按钮点击事件
+			var loginBtn = document.getElementById('login-btn')
+			loginBtn.addEventListener('tap', tapLoginBtn)
+			
+			// 添加自动登录复选框改变事件
+			var autoLoginCheckBox = document.getElementById('auto-login')
+			autoLoginCheckBox.addEventListener('change', function () {
+				if (autoLoginCheckBox.checked) {
+					plus.storage.setItem('autoLogin', 'ok')
+				} else {
+					plus.storage.removeItem('autoLogin')
+				}
+			})
+		}
+		
+		function getAccountInfo () {
+			var uid = plus.storage.getItem('uid')
+			var pwd = plus.storage.getItem('pwd')
+			var autoLogin = plus.storage.getItem('autoLogin')
+			
+			uid && (document.getElementById('uid').value = uid)
+			pwd && (document.getElementById('pwd').value = pwd)
+			autoLogin && (document.getElementById('auto-login').checked = true)
+			
+			return {
+				uid: uid,
+				pwd: pwd,
+				autoLogin: autoLogin
+			}
+		}
+	</script>
+	<script type="text/javascript">
+		//设置请求路径
+		mui.init()
+		
+		// 获取本地存储的账户信息
+		mui.plusReady(function () {
+			plus.storage.setItem('youranLocalUrl', 'http://192.168.129.76:8098');
+//			plus.storage.setItem('youranLocalUrl', 'http://192.168.129.173:3000');
+			localUrl = plus.storage.getItem('youranLocalUrl');
+			// 得到本地账户信息
+			var accountInfo = getAccountInfo()
+			var autoLogin = accountInfo.autoLogin
+			var uid = accountInfo.uid
+			var pwd = accountInfo.pwd
+			
+			if (autoLogin && uid && pwd) {
+				ajaxLogin(uid, pwd)
+			}
+		}) 
+		
+		// 给input添加focus和blur事件
+		addDomEvent()
+		
+	</script>
+</html>

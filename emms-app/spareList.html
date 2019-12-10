@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>备件</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="css/app.css" />
+		<link rel="stylesheet" href="css/util.css">
+		<!--<link href="css/mui.indexedlist.css" rel="stylesheet" />-->
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			
+			.left-p-text {
+				width: 80px;
+				height: 80px;
+				margin-right: 10px;
+				background-color: #87CEFA;
+				color: #fff;
+				line-height: 80px;
+				text-align: center;
+				font-size: 50px;
+			}
+			
+			#topPopover {
+				position: fixed;
+				top: 16px;
+				right: 6px;
+			}
+			
+			.task-spare-img {
+				position: absolute;
+				top: 12px;
+				right: 12px;
+				width: 80px;
+			}
+			
+			#topPopover .mui-popover-arrow {
+				left: auto;
+				right: 6px;
+			}
+			/*p {
+				text-indent: 22px;
+			}*/
+			
+			span.mui-icon {
+				font-size: 14px;
+				color: #007aff;
+				margin-left: -15px;
+				padding-right: 10px;
+			}
+			
+			.mui-popover {
+				height: 85px;
+			}
+			
+			#seach-xm {
+				width: 100%;
+			}
+			/*#popover {
+				position: fixed;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);
+			}
+			
+			.popover-title {
+				font-size: 20px;
+				padding: 10px 10px 0 10px;
+			}*/
+		</style>
+	</head>
+
+	<body>
+
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+
+			<div class="mui-scroll">
+
+				<div class="mui-input-row mui-search">
+					<input id="seach-xm" placeholder="请输入名称或型号" type="search" class="mui-input-clear" placeholder="">
+				</div>
+				<ul class="mui-table-view o-scroll-y-auto" style="top:-15px;">
+
+				</ul>
+			</div>
+		</div>
+
+		<div id="topPopover" class="mui-popover" style="width: 150px;">
+			<div class="mui-popover-arrow"></div>
+			<div class="">
+				<div class="mui-scroll">
+					<ul id="opselects-concat" class="mui-table-view">
+						<li class="mui-table-view-cell">
+							<a href="page/scan2d.html" types='detail'>扫描备件</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a href="page/scan2d.html" types='put'>扫描入库</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="js/mui.min.js"></script>
+	<script src="js/commonAction.js"></script>
+	<script src="js/base64.min.js"></script>
+
+	<script>
+		mui.init({
+			swipeBack: true,
+			pullRefresh: {
+				container: '#pullrefresh',
+				down: {
+					//					 style:'circle',
+
+					callback: pulldownRefresh
+				},
+				up: {
+					contentrefresh: '正在加载...',
+					callback: pullupRefresh
+				}
+			},
+			//			preloadPages: [{
+			//				id: 'bjDetail',
+			//				url: './page/bjDetail.html',
+			//			}]
+		});
+
+		mui.ready(function() {
+			mui('#opselects-concat').on('tap', 'a', function() {
+				mui('#topPopover').popover('toggle');
+				var types = this.getAttribute('types');
+				var href = this.getAttribute('href');
+				actionMuiCommon.towebview(href, {
+					type: types
+				})
+			});
+		});
+
+		var spareType = '', //是否是选择设备，设备id
+			spareListEq = {}; //设备相关备件
+
+		mui.plusReady(function() {
+			localUrl = plus.storage.getItem('youranLocalUrl');
+			localUid = plus.storage.getItem('uid');
+			var self = plus.webview.currentWebview();
+			spareType = self.type;
+			pullupRefresh(true, false, '', plus);
+			mui('body').on('change', '#seach-xm', function() {
+				var sechStr = this.value;
+				count = 0;
+				if(sechStr.length > 0) {
+					//					console.log(sechStr);
+					pullupRefresh(true, true, sechStr, plus);
+				} else {
+					//					count = 0;
+					pullupRefresh(true, true, '', plus);
+				}
+			});
+			var detailPage = null;
+			mui("body").on('tap', '.mui-table-view-cell a.detail-a', function() {
+				var id = this.getAttribute('id'); //this.getAttribute("id");
+				var num = this.getAttribute('num'); //this.getAttribute("id");
+				// console.log(num)
+				if(spareType) {
+					mui.prompt('', '默认数量为：1', '请输入备件数量', ['确定', '取消'], function(e) {
+						// console.log(e)
+						if(e.index == 0) {
+							if(e.value && Number(e.value) > 0 && Number(e.value) <= num) {
+								var self = plus.webview.getWebviewById('listDetail.html');
+								self.evalJS("addSpare('" + e.value + "," + id + "')");
+								setTimeout(function(){
+									mui.back();
+								},100)
+							} else {
+								mui.alert('请输入正确的数量')
+							}
+						}
+					}, 'div')
+					
+					document.querySelector('.mui-popup-input input').type = 'number'
+					return;
+				}
+				
+				//获取id
+
+				plus.storage.setItem('cd', id);
+				/*//获得详情页面
+				if(!detailPage){
+				    detailPage = plus.webview.getWebviewById('bjDetail');
+				}
+				//传值给详情页面，通知加载新数据
+				mui.fire(detailPage,'getDetailone',{cd:id});*/
+				//				alert(id)
+				//打开
+				mui.openWindow({
+					id: 'bjDetail',
+					url: './page/bjDetail.html',
+					extras: {
+						cd: id
+					},
+					styles: {
+						popGesture: "close"
+					},
+				});
+			});
+		});
+
+		/*下拉刷新具体业务实现*/
+		function pulldownRefresh() {
+			//			alert(1)
+						setTimeout(function() {
+			count = 0;
+			pullupRefresh(true, true, '',plus);
+							mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+						}, 1000);
+		};
+
+		/*上拉加载具体业务实现*/
+		var count = 0; //当前页数
+		var totalPage = 0; //总页数
+
+		function pullupRefresh(flag, isSec, sechStr, plus) {
+			spareListEq = {};
+			count++
+			sechStr = sechStr ? sechStr : document.querySelector('#seach-xm').value,
+			setTimeout(function() {
+			if(sechStr) {
+				reqEquSpare(reqData, flag, isSec, sechStr, plus)
+			} else {
+				reqData(flag, isSec, sechStr, plus)
+			}
+			mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+			}, 1000);
+
+		}
+
+		function reqEquSpare(calback, flag, isSec, sechStr, plus) {
+			var token1=plus.storage.getItem("token")
+			var pa = {
+				equipId: [null],
+			};
+
+			var p = Base64.encode(JSON.stringify(pa));
+			mui.ajax(localUrl + '/api/spare/findAll', {
+
+				data: pa,
+				dataType: 'json',
+				type: 'post',
+				contentType:'application/json',
+				beforeSend: function (XMLHttpRequest){
+					XMLHttpRequest.setRequestHeader("Authorization", token1);
+				},
+				success: function(data) {
+					console.log(data)
+					if(data.code === '0') {
+						eqDataList(data.data.rows,sechStr);
+					} else {
+						mui.toast('数据加载失败');
+					}
+				},
+				error: function(err) {
+					console.log(err);
+				}
+			});
+		}
+
+		function reqData(flag, isSec, sechStr, plus, test) {
+
+			var isSec = isSec;
+
+			//			setTimeout(function() {
+			var table = document.body.querySelector('.mui-table-view');
+			var cells = document.body.querySelectorAll('.mui-table-view-cell');
+			if(flag) {
+				//				count++
+				//									mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
+			} else {
+
+				mui('#pullrefresh').pullRefresh().endPullupToRefresh(count > totalPage); //参数为true代表没有更多数据了。(++count > 2)
+				if(count > totalPage) return;
+			}
+			//						console.log(count)
+			var p = {
+				uid: localUid,
+				text: "",
+				is_alert: 0,
+				equip_ids: [null],
+				page_no: count,
+				page_size: 20,
+				sort_col: "",
+				sort_order: "asc"
+			};
+
+			if(isSec) {
+				p.text = sechStr;
+			}
+			//			console.log(JSON.stringify(p))
+			p = Base64.encode(JSON.stringify(p));
+			var p1 = {
+				"cmd": 0x01,
+				param: p
+			};
+			var token=plus.storage.getItem("token")
+			mui.ajax(localUrl + '/api/spare/findAll', {
+				data: p1,
+				dataType: 'json',
+				type: 'post',
+				beforeSend: function (XMLHttpRequest){
+					XMLHttpRequest.setRequestHeader("Authorization", token);
+				},
+				contentType:'application/json',
+				success: function(data) {
+					// console.log(data.data.rows)
+					if(data.code === '0') {
+						totalPage = Math.ceil(data.data.rows.length / 20);
+						//							console.log(totalPage);
+						generateSparePartsList(data.data.rows, isSec, test);
+					} else {
+						mui.toast('数据加载失败');
+					}
+				},
+				error: function(err) {
+					console.log(err);
+				}
+			});
+
+			//			}, 1000);
+		}
+
+		function generateSparePartsList(data, isSec, test) {
+			var table = document.body.querySelector('.mui-table-view');
+			if(isSec && !test) {
+				//var cnode = document.querySelectorAll('.mui-table-view .miu-table-view-cell');
+				var elAry = Array.prototype.slice.call(table.childNodes);
+				elAry.forEach(function(item) {
+					if(item.nodeType == 1) {
+						table.removeChild(item);
+					}
+				});
+			}
+			for(var i = 0, len = data.length; i < len; i++) {
+				
+				var name = (data[i].nameCn).charAt(0);
+				var id = data[i].partId ? data[i].partId : '';
+				var li = document.createElement('li');
+				li.className = 'mui-table-view-cell';
+				li.innerHTML = `<a class="detail-a"  href="javascript:;" id="${id}" num="${data[i].amount}">
+								<p class="mui-pull-left left-p-text">${name}</p>
+								<div class="mui-media-body">
+									<p class="mui-media-body-tt mui-ellipsis" style="font-size: 18px;">${data[i].nameCn?data[i].nameCn:''}</p>
+									<p class='mui-ellipsis mgt-10'>
+										<span>设备名称:<span class="mgl-5">${data[i].equipName?data[i].equipName:''}</span></span>
+									</p>
+									<p class='mui-ellipsis mgt-10'>
+										<span>实际库存:<span class="mgl-5">${data[i].stockAmount?data[i].stockAmount:'0'}${data[i].amountUnit?data[i].amountUnit:'0'}</span></span>
+										<span class="mgl-9">安全库存:<span class="mgl-5">${data[i].safetyStockAmount?data[i].safetyStockAmount:'0'}${data[i].amountUnit?data[i].amountUnit:'0'}</span></span>
+									</p>
+								</div>
+							</a>`;
+
+				table.appendChild(li);
+			}
+
+			mui('#pullrefresh').pullRefresh().endPulldownToRefresh(false)
+		}
+
+		function eqDataList(data, input) {
+			// console.log(data)
+			var table = document.body.querySelector('.mui-table-view');
+			var elAry = Array.prototype.slice.call(table.childNodes);
+			elAry.forEach(function(item) {
+				if(item.nodeType == 1) {
+					table.removeChild(item);
+				}
+			});
+			for(var i = 0, len = data.length; i < len; i++) {
+				var name = (data[i].nameCn).charAt(0);
+				var id = data[i].partId ? data[i].partId : '';
+				var li = document.createElement('li');
+				li.className = 'mui-table-view-cell';
+				if (id===Number(input)||data[i].nameCn.search(input)!==-1){
+					li.innerHTML = `<a class="detail-a"  href="javascript:;" id="${id}" num="${data[i].amount}">
+									<p class="mui-pull-left left-p-text">${name}</p>
+									<div class="mui-media-body">
+										<p class="mui-media-body-tt mui-ellipsis" style="font-size: 18px;">${data[i].nameCn?data[i].nameCn:''}</p>
+										<p class='mui-ellipsis mgt-10'>
+											<span>设备名称:<span class="mgl-5">${data[i].equipName?data[i].equipName:''}</span></span>
+										</p>
+										<p class='mui-ellipsis mgt-10'>
+											<span>实际库存:<span class="mgl-5">${data[i].stockAmount?data[i].stockAmount:'0'}${data[i].amountUnit?data[i].amountUnit:'0'}</span></span>
+											<span class="mgl-9">安全库存:<span class="mgl-5">${data[i].safetyStockAmount?data[i].safetyStockAmount:'0'}${data[i].amountUnit?data[i].amountUnit:'0'}</span></span>
+										</p>
+									</div>
+								</a>`;
+					
+					
+				}
+				else{continue}
+			table.appendChild(li);	
+			}
+		}
+
+		function shownpop() {
+			mui('#topPopover').popover('toggle');
+		}
+
+		mui('body').on('shown', '.mui-popover', function(e) {});
+
+		mui('body').on('hidden', '.mui-popover', function(e) {});
+	</script>
+
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/util.css">
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a id="back" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="title" class="mui-title"></h1>
+		</header>
+		<div id="popheader" class="ptfix popheader" style="top: 13px;right: 10px;z-index: 1000;">
+			<a id="menu" class="mui-action-menu mui-icon mui-icon-bars mui-pull-right" style="font-size: 18px;" href="#topPopover">全部任务</a>
+		</div>
+		<div class="mui-content">
+			
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script type="text/javascript">
+		if(window.plus) {
+			plusReady();
+		} else {
+			document.addEventListener('plusready', plusReady, false);
+		}
+
+		function plusReady() {
+			var self = plus.webview.currentWebview();
+			var type = self.type,
+				result = self.cd;
+				console.log(JSON.stringify(self))
+			if(type == 'task'){
+				document.querySelector('.mui-title').innerHTML = '设备相关任务';
+				document.querySelector('#menu').style.display = 'none';
+			}
+			
+			//启用双击监听
+			mui.init({
+				gestureConfig: {
+					doubletap: true
+				},
+				subpages: [{
+					url: 'rwList.html',
+					id: 'rwList.html',
+					styles: {
+						top: '45px',
+						bottom: '0px',
+					},
+					extras: {
+						type: type,
+						result:result
+					}
+				}]
+			});
+		}
+
+		var contentWebview = null;
+		document.querySelector('header').addEventListener('doubletap', function() {
+			if(contentWebview == null) {
+				contentWebview = plus.webview.currentWebview().children()[0];
+			}
+			contentWebview.evalJS("mui('#pullrefresh').pullRefresh().scrollTo(0,0,100)");
+		});
+
+		mui('#popheader').on('tap', 'a', function() {
+			//				console.log(this.innerText)
+			//				mui('body').on('hidden', '.mui-popover', function(e) {
+			//				console.log('hidden', e.detail.id);//detail为当前popover元素
+
+			//				});
+			//				document.querySelector('.mui-backdrop').remove()
+			if(contentWebview == null) {
+				contentWebview = plus.webview.currentWebview().children()[0];
+			}
+			contentWebview.evalJS("shownpop()");
+		})
+
+		function changepoptxt() {
+			//			console.log(333)
+			var listtype = plus.storage.getItem("listtype");
+			document.getElementById('menu').innerText = listtype;
+		}
+	</script>
+
+</html>

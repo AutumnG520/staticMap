@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<!DOCTYPE html>
+		<html>
+
+		<head>
+			<meta charset="utf-8">
+			<title>日历</title>
+			<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+			<meta name="apple-mobile-web-app-capable" content="yes">
+			<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+			<link rel="stylesheet" href="../css/mui.min.css">
+			<link rel="stylesheet" href="../css/util.css">
+			<style>
+				body,
+				html {
+					width: 100%;
+					/*height: 100%;*/
+					overflow: hidden;
+				}
+				
+				.mui-card-header img {
+					width: 21px;
+					/*margin-top:2px ;*/
+				}
+				
+				a {
+					color: #333333;
+				}
+				
+				.mui-plus .plus {
+					display: inline;
+				}
+				
+				.plus {
+					display: none;
+				}
+				
+				#topPopover {
+					position: fixed;
+					top: 16px;
+					right: 6px;
+				}
+				
+				#topPopover .mui-popover-arrow {
+					left: auto;
+					right: 6px;
+				}
+				/*p {
+				text-indent: 22px;
+			}*/
+				
+				span.mui-icon {
+					font-size: 14px;
+					color: #007aff;
+					margin-left: -15px;
+					padding-right: 10px;
+				}
+				
+				.mui-popover {
+					height: 350px;
+				}
+				
+				#topPopover {
+					position: fixed;
+					top: 16px;
+					right: 6px;
+				}
+				
+				#topPopover .mui-popover-arrow {
+					left: auto;
+					right: 6px;
+				}
+				
+				.calendar-time {
+					position: relative;
+					height: 40px;
+					background: #FFF;
+				}
+				
+				.calender-select {
+					position: absolute;
+					z-index: 10;
+					width: 100%;
+					height: 100%;
+					text-align: center;
+					line-height: 40px;
+					font-size: 20px;
+					color: #208FE8;
+					background: transparent;
+				}
+				
+				.triangle {
+					width: 0;
+					height: 0;
+					border-left: 1rem solid transparent;
+					border-right: 1rem solid transparent;
+					border-top: 1rem solid #208FE8;
+					position: absolute;
+					z-index: 9;
+					top: 1.3rem;
+					right: 1rem;
+				}
+				
+				.wlh-radius {
+					border-radius: 10px;
+				}
+				
+				.wlh-care {
+					margin-top: 5px;
+				}
+				
+				.wlh-test {
+					height: 0px;
+				}
+				
+				.wlh-test1 {
+					height: 25px;
+				}
+				
+				.wlh-algin {
+					text-align: center;
+					margin-top: 50px;
+					color: #333;
+				}
+				
+				.wlh-ts {
+					margin-top: 40px;
+					text-align: center;
+				}
+				
+				.wlh-none {
+					text-align: center;
+					line-height: 60px;
+					color: #CCC;
+				}
+				
+				.wlh-wrap {
+					position: relative;
+				}
+				
+				.calendar-chart {
+					width:100vw;
+					height:100vh;
+					position: fixed;
+					top:40px;
+					left:0;
+					background: #CCC;
+					transform: translateX(100%);
+					transition: all linear .5s;
+				}
+				
+				.wlh-chart-img {
+					position: fixed;
+					right: 20px;
+					bottom: 20px;
+					width: 40px;
+				}
+				
+				#circle,#chart {
+					width: 100%;
+					height:calc(50vh - 40px);
+				}
+
+			</style>
+		</head>
+
+		<body>
+			<div class="ptfix" style="bottom: 20px;right: 10px;z-index: 1000;">
+			
+			</div>
+			<div id="topPopover" class="mui-popover">
+				<!-- <div class="mui-popover-arrow"></div> -->
+				<div class="mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<ul id="opselects" class="mui-table-view">
+							<li class="mui-table-view-cell">
+								<a href="#" types='-1'>全部任务</a>
+							</li>
+							<li class="mui-table-view-cell">
+								<a href="#" types='0'>分配我的</a>
+							</li>
+							<li class="mui-table-view-cell">
+								<a href="#" types='1'>我派发的</a>
+							</li>
+							<li class="mui-table-view-cell">
+								<a href="#" types='2'>报告我的</a>
+							</li>
+							<li class="mui-table-view-cell">
+								<a href="#" types='3'>我参与的</a>
+							</li>
+							<li class="mui-table-view-cell">
+								<a href="#" types='4'>我关注的</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="mui-content wlh-wrap">
+				<div class="calendar-time">
+					<p class="calender-select">
+						2018-02-28
+					</p>
+					<div class="triangle">
+					</div>
+				</div>
+				<div class="calendar-list">
+
+				</div>
+				<div class="calendar-chart">			
+					<div id="circle"></div>
+					<div id="chart"></div>
+				</div>
+				<img class="wlh-chart-img" src="../images/chart.png" alt="" />
+
+			</div>
+		</body>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/base64.min.js"></script>
+		<script src="../js/template-web.js"></script>
+		<script src="../js/echarts.js"></script>
+		<script type="text/javascript">
+			//类型分配
+			var globalType = -1,
+				globalDate = nowDate();
+
+			if(window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener('plusready', plusReady, false);
+			}
+
+			function plusReady() {
+				localUrl = plus.storage.getItem('youranLocalUrl');
+				
+				//启用双击监听
+				mui.init({
+
+				});
+
+				document.querySelector('.calender-select').innerHTML = nowDate();
+
+				getAjaxData();
+				clickEvent();
+
+			}
+
+			function clickEvent() {
+				var chartDom = document.querySelector('.calendar-chart');
+			
+				var parentWebview = null;
+				mui('#opselects').on('tap', 'li a', function() {
+					mui('#topPopover').popover('toggle');
+					if(parentWebview == null) {
+						parentWebview = plus.webview.currentWebview().opener();
+					}
+					mui('#opselects').popover('toggle');
+					document.querySelector('.mui-backdrop.mui-active').style.display = 'none';
+					globalType = Number(this.getAttribute('types'));
+					plus.storage.setItem("calendartype", this.innerText);
+					getAjaxData();
+					parentWebview.evalJS("changepoptxt()");
+				})
+
+				mui('body').on('tap', '.calender-select', function() {
+					pickDate(function(date) {
+						globalDate = date;
+						document.querySelector('.calender-select').innerHTML = date;
+						getAjaxData();
+					})
+				})
+				mui('body').on('tap','.wlh-chart-img',function(){
+					var newSrc = this.src.slice(this.src.indexOf('images/')+7)
+
+					if(newSrc == 'chart.png'){
+						this.setAttribute('src','../images/list.png');
+						chartDom.style = 'transform:translateX(0)';
+					}else if(newSrc == 'list.png'){
+						this.setAttribute('src','../images/chart.png');
+						chartDom.style = 'transform:translateX(100%)';
+						
+					}
+				})
+			}
+
+			//请求数据
+			function getAjaxData() {
+				var token=plus.storage.getItem("token")
+				if(globalType === -1) {
+					var api='/api/task/all'
+					var p1 = {
+						taskType:-1,
+						startDate: globalDate+ ' 00:00',
+						endDate: globalDate + ' 23:59',
+						sortCol:"progress",
+						sortOrder:"asc",
+						pageNo:1,
+						pageSize:200,
+				
+					}
+				} else {
+					if(globalType===4){
+						var api='/api/task/me'
+						var p1 = {
+							me: globalType,
+							status: -1,
+							equipIds: [""],
+							progress: -1,
+							taskType: -1,
+							startDate: globalDate+ ' 00:00',
+							endDate: globalDate + ' 23:59',
+							users: [""],
+							pageNo: 1,
+							pageSize: 200,
+							sortCol: 'progress',
+							sortOrder: 'asc',
+							isChild:0,
+							query:''
+						}}
+					else{
+					var api='/api/task/me'
+					var p1 = {
+						me: globalType,
+						status: -1,
+						equipIds: [""],
+						progress: -1,
+						taskType: -1,
+						startDate: globalDate+ ' 00:00',
+						endDate: globalDate + ' 23:59',
+						users: [""],
+						pageNo: 1,
+						pageSize: 200,
+						sortCol: 'progress',
+						sortOrder: 'asc',
+						isChild:0,
+						query:''
+					}
+					}
+					// console.log(p1)
+				}
+				
+				// console.log(p1)
+				var nwaiting = plus.nativeUI.showWaiting();
+				mui.ajax(localUrl+api, {
+					data: p1,
+					dataType: 'json',
+					type: 'get',
+					beforeSend: function (XMLHttpRequest){
+						XMLHttpRequest.setRequestHeader("Authorization", token);
+					},
+					success: function(data) {
+						nwaiting.close();
+						// console.log(data)
+						if(data.code == 0) {
+							var state1 = 0,
+								state2 = 0,
+								state3 = 0,
+								html = '<div class="wlh-none">没有数据</div>'; //任务状态（正常，预警，逾期）。添加字符串
+							if(data.data.rows.length !== 0) {
+								data.data.rows.forEach(function(v, k) {
+									if(v.status&&v.status.code === 0) {
+										state1 += 1;
+									} else if(v.status&&v.status.code === 1) {
+										state2 += 1;
+									} else if(v.status&&v.status.code === 2) {
+										state3 += 1;
+									}
+								})
+								html = template("test", data.data.rows);
+							}
+							document.querySelector('.calendar-list').innerHTML = html;
+							mobilePie(state1, state2, state3);
+							mobileRect(state1, state2, state3);
+						} else {
+							mui.toast('请求错误，请重试');
+						}
+					},
+					error: function(err) {
+						nwaiting.close();
+						mui.toast('请求错误，请重试');
+						console.log(err)
+					}
+				})
+			}
+
+			// 选择日期
+			function pickDate(callback) {
+				plus.nativeUI.pickDate(function(e) {
+					var d = e.date,
+						date = d.getFullYear() + "-" + addZero(d.getMonth() + 1) + "-" + addZero(d.getDate());
+					callback(date);
+				}, function(e) {
+					console.log("未选择日期：" + e.message);
+					mui.toast('已取消选择');
+				}, {
+					title: "请选择日期："
+				});
+			}
+
+			//日期加零
+			function addZero(e) {
+				if(e > 9) {
+					return e;
+				} else if(e < 10) {
+					return '0' + e;
+				}
+			}
+
+			//当前时间
+			function nowDate() {
+				var date = new Date();
+				return date.getFullYear() + "-" + addZero(date.getMonth() + 1) + "-" + addZero(date.getDate());
+			}
+
+			//圆形图
+			function mobilePie(s1, s2, s3) {
+				//圆饼
+				echarts.init(document.getElementById('circle')).setOption({
+					title: {
+						x: 'center'
+					},
+					tooltip: {
+						trigger: 'item',
+						formatter: "{a} <br/>{b} : {c} ({d}%)"
+					},
+					color: ['#33CC66', '#D0B473', '#EE8687'],
+					series: [{
+						// name: '访问来源',
+						type: 'pie',
+						radius: '60%',
+						center: ['50%', '50%'],
+						data: [{
+								value: s1,
+								name: '正常任务\n' + s1
+							},
+							{
+								value: s3,
+								name: '逾期任务\n' + s3
+							},
+							{
+								value: s2,
+								name: '预警任务\n' + s2
+							},
+						],
+						itemStyle: {
+							emphasis: {
+								shadowBlur: 10,
+								shadowOffsetX: 0,
+								shadowColor: 'rgba(0, 0, 0, 0.5)'
+							}
+						}
+
+					}]
+				}, null, {
+					renderer: 'svg'
+				});
+
+			}
+
+			//柱状图
+			function mobileRect(s1, s2, s3) {
+				//柱状
+				echarts.init(document.getElementById('chart')).setOption({
+					color: ['#53FF53', '#D0B473', '#EE8687'],
+					tooltip: {
+						trigger: 'axis',
+						axisPointer: { // 坐标轴指示器，坐标轴触发有效
+							type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+						}
+					},
+					grid: {
+						left: '3%',
+						right: '4%',
+						bottom: '3%',
+						containLabel: true
+					},
+					legend: {
+						data: ['正常任务', '逾期任务', '预警任务']
+					},
+					xAxis: [{
+							type: 'category',
+							data: ['正常任务', '逾期任务', '预警任务'],
+							// axisTick: {
+							//     alignWithLabel: true
+							// }
+						},
+						// nameLocation:'start'
+					],
+					yAxis: [{
+						type: 'value'
+					}],
+					series: [{
+						// name:'nihao',
+						type: 'bar',
+						barWidth: '60%',
+						data: [s1, s3, s2],
+						itemStyle: {
+							normal: {
+								color: function(params) {
+									var colorList = ['#33CC66', '#D0B473', '#EE8687'];
+									return colorList[params.dataIndex];
+								},
+								label: {
+									show: true,
+									position: 'top',
+									formatter: '{b}\n{c}'
+								}
+							}
+						},
+					}]
+				}, null, {
+					renderer: 'svg'
+				});
+
+			}
+			function shownpop() {
+				mui('#topPopover').popover('toggle');
+			}
+		</script>
+
+		</html>
+	</body>
+
+</html>
+<!-- <div class="mui-card wlh-radius" style="height: 140px;">
+		{{if $value.st == 0}}
+		<div class="FL colW10 ptrel" style="height: 100%;background-color: #90EE90;">
+			<p class=" wlh-algin">正<br>常</p>
+			{{else if $value.st == 1}}
+			<div class="FL colW10 ptrel" style="height: 100%;background-color: #D2691E;">
+				<p class=" wlh-algin">预<br>警</p>
+				{{else if $value.st == 2}}
+				<div class="FL colW10 ptrel" style="height: 100%;background-color: #CDAD00;">
+					<p class=" wlh-algin">逾<br>期</p>
+					{{/if}} -->
+<script id="test" type="text/html">
+	{{each $data}}
+				<div class="mui-card wlh-radius" style="height: 140px;">
+					{{if $value.status}}
+					{{if $value.status.code == 0}}
+					<div class="FL colW10 ptrel" style="height: 100%;background-color: #90EE90;">
+						<p class=" wlh-algin">正<br>常</p>
+						{{else if $value.status.code == 1}}
+						<div class="FL colW10 ptrel" style="height: 100%;background-color: #D2691E;">
+							<p class=" wlh-algin">预<br>警</p>
+							{{else if $value.status.code == 2}}
+							<div class="FL colW10 ptrel" style="height: 100%;background-color: #CDAD00;">
+								<p class=" wlh-algin">逾<br>期</p>
+								{{/if}}
+								{{else}}
+					
+					<div class="FL colW10 ptrel" style="height: 100%;background-color: #90EE90;">
+						<p class=" wlh-algin">占<br>位</p>
+				{{/if}}
+
+				</div>
+				<div class="FL colW90">
+					<div class="mui-card-header wlh-test t-c">
+						<p class="FL mg0 colW50 t-l textApostrophe">{{ $value.equips[0].equipName }}</p>
+						<p class="FR mg0 colW25 F12">{{$value.equips[0].equipId}}</p>
+						<p class="FR mg0 colW20 F12 bdCir5 bdccc">
+							{{$value.progress.name }}
+							</p>
+						<!--<p class="FR mg0 colW10 pd-lr10 wlh-care">
+							{{if $value.care == 0}}
+							<img src="../images/start.png" data-id="{{$value.taskid}}" /> {{else}}
+							<img src="../images/start-1.png" data-id="{{$value.taskid}}" /> {{/if}}
+						</p>-->
+					</div>
+					<div class="mui-card-content">
+						<div class="mui-card-content-inner">
+							<div class="FL colW100 wlh-test1">
+								<p class="FL colW5 "><img src="../images/user.png" style="margin-top:3px"/></p>
+								<p class="FL colW95 pd-l5">
+									{{each $value.actor}} {{$value}} {{/each}}
+								</p>
+							</div>
+							<div class="FL colW100 wlh-test1">
+								<p class="FL colW5 "><img src="../images/home-2.png" style="margin-top:3px"/></p>
+								<p class="FL colW95 pd-l5">{{ $value.equips[0].position?$value.equips[0].position:'未知' }}</p>
+							</div>
+							<div class="FL colW100 wlh-test1">
+								<p class="FL colW5 "><img src="../images/time.png" style="margin-top:3px"/></p>
+								<p class="FL colW95 pd-l5">{{ $value.endDate }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			{{/each}}
+</script>

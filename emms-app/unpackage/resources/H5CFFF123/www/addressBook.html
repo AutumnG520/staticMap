@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>通信录</title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link href="css/mui.indexedlist.css" rel="stylesheet" />
+		<style>
+			html,
+			body {
+				height: 100%;
+				/*margin-bottom:40px;*/
+				overflow: hidden;
+			}
+			
+			.mui-bar {
+				-webkit-box-shadow: none;
+				box-shadow: none;
+			}
+			
+			.wlh-org {
+				height: 60px;
+			}
+			
+			.wlh-radius {
+				float: left;
+				width: 48px;
+				height: 48px;
+				border-radius: 50%;
+				background: #00A1FF;
+				text-align: center;
+				line-height: 48px;
+				color: #FFF;
+				vertical-align: middle;
+				margin-top: -5px;
+			}
+			
+			.wlh-text {
+				float: left;
+				padding: 0 15px;
+			}
+			
+			.wlh-font {
+				margin-top: -1px;
+				font-size: 20px;
+			}
+			
+			.wlh-font1 {
+				margin-top: 5px;
+			}
+			
+			.wlh-check {
+				float: right;
+				height: 48px;
+				display: none;
+			}
+			
+			.wlh-check img {
+				width: 20px;
+				height: 20px;
+				display: inline-block;
+				margin-top: 8px;
+			}
+			
+			#mui-content-body {
+				/*margin-bottom: 40px;*/
+			}
+			/*.mui-content{
+				margin-bottom:100px;
+			}*/
+		</style>
+	</head>
+
+	<body>
+		<div id="mui-content-body" class="mui-content">
+			<div id='list' class="mui-indexed-list">
+				<div class="mui-indexed-list-search  mui-search" style="display: none;">
+					<input type="search" class="mui-input-clear mui-indexed-list-search-input" placeholder="搜索用户">
+				</div>
+				<div class="mui-indexed-list-bar">
+					<a>A</a>
+					<a>B</a>
+					<a>C</a>
+					<a>D</a>
+					<a>E</a>
+					<a>F</a>
+					<a>G</a>
+					<a>H</a>
+					<a>I</a>
+					<a>J</a>
+					<a>K</a>
+					<a>L</a>
+					<a>M</a>
+					<a>N</a>
+					<a>O</a>
+					<a>P</a>
+					<a>Q</a>
+					<a>R</a>
+					<a>S</a>
+					<a>T</a>
+					<a>U</a>
+					<a>V</a>
+					<a>W</a>
+					<a>X</a>
+					<a>Y</a>
+					<a>Z</a>
+				</div>
+				<div class="mui-indexed-list-alert"></div>
+				<div class="mui-indexed-list-inner">
+					<div class="mui-indexed-list-empty-alert">没有数据</div>
+					<ul class="mui-table-view wlh-list">
+
+					</ul>
+				</div>
+			</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/mui.indexedlist.js"></script>
+
+	</body>
+
+</html>
+<script src="js/pinyin_dict_firstletter.js"></script>
+<script src="js/pinyin_dict_notone.js"></script>
+<script src="js/pinyinUtil.js"></script>
+<script src="js/base64.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+	mui.init({
+		preloadPages: [{
+			id: 'ctactDetail',
+			url: './page/ctactDetails.html',
+		}]
+	});
+
+	mui.ready(function() {
+		if(window.plus) {
+			plusReady();
+		} else {
+			document.addEventListener('plusready', plusReady, false);
+		}
+
+		function plusReady() {
+			var bodyHeight = plus.display.resolutionHeight;
+			var height = 40;
+			if(!type) {
+				height = 100;
+			}
+			var list = document.querySelector('#list');
+			list.style.height = (bodyHeight - height) + 'px';
+			window.indexedList = new mui.IndexedList(list);
+		}
+
+	});
+
+	var detailPage = null;
+	mui.plusReady(function() {
+		localUrl = plus.storage.getItem('youranLocalUrl');
+		uid = plus.storage.getItem('uid');
+		wt = plus.nativeUI.showWaiting();
+		var self = plus.webview.currentWebview(),
+			equipId = self.equipId;
+		type = self.type;
+		if(type) {
+			getPersonData(equipId);
+			personClick(type);
+		} else {
+			listClick();
+			getAjaxParam();
+		}
+
+	});
+
+	//详情点击事件
+	function listClick() {
+		mui('body').on('tap', '.wlh-list>.mui-indexed-list-item', function() {
+			var uid = this.getAttribute('data-uid');
+			//获得详情页面
+			if(!detailPage) {
+				detailPage = plus.webview.getWebviewById('ctactDetail');
+			}
+			//打开
+			mui.openWindow({
+				id: 'ctactDetail',
+				url: './page/ctactDetails.html',
+				extras: {
+					uid: uid //自定义扩展参数，可以用来处理页面间传值
+				},
+				styles: {
+					popGesture: "close"
+				},
+			});
+
+		})
+
+	}
+
+	function personClick(type) {
+		if(type !== 'actor') {
+			mui('body').on('tap', '.wlh-list>.mui-indexed-list-item', function(e) {
+				var backHtml = plus.webview.getWebviewById('backTitle.html'),
+					name = this.getAttribute('data-name'),
+					uid = this.getAttribute('data-uid'),
+					duiDom = this.querySelector('.wlh-check'),
+					index = this.getAttribute('index');
+				if(duiDom.style.display == 'block') {
+					var del = false;
+					duiDom.style.display = 'none';
+				} else {
+					var del = true;
+					duiDom.style.display = 'block';
+				}
+				backHtml.evalJS("back('" + name + "," + uid + "," + del + "," + index + "," + type + "')");
+			})
+		} else {
+			mui('body').on('tap', '.wlh-list>.mui-indexed-list-item', function(e) {
+				//				var addHtml = plus.webview.getWebviewById('add.html'),
+				var addHtml = plus.webview.currentWebview().opener(),
+					name = this.getAttribute('data-name'),
+					uid = this.getAttribute('data-uid'),
+					index = this.getAttribute('index');
+				addHtml.evalJS("actorPerson('" + name + "," + uid + "')");
+				mui.back();
+
+			})
+		}
+
+	}
+
+	//获取通讯录数据
+	function getAjaxParam() {
+		var uid = plus.storage.getItem('uid');
+		var token=plus.storage.getItem('token');
+		// var p = {
+		// 	uid: aaa,
+		// 	text: "",
+		// 	page_no: 1,
+		// 	page_size: 100,
+		// 	sort_col: "",
+		// 	sort_order: "asc"
+		// }
+		// p = JSON.stringify(p);
+		var p1 = {
+			cmd: 0x01,
+			// param: p
+			// uid: uid,
+			token: token,
+			name: "",
+			page_no: 1,
+			page_size: 100,
+			sort_col: "",
+			sort_order: "asc"
+		};
+		mui.ajax(localUrl + '/api/user/findAll', {
+			data: p1,
+			dataType: 'json',
+			contentType:'application/json',
+			beforeSend: function (XMLHttpRequest){
+				XMLHttpRequest.setRequestHeader("Authorization", token);
+			},
+			type: 'post',
+			success: function(data) {
+				// console.log(data)
+				if(data.code === '0') {
+					pinyiTransform(data.data.rows);
+				} else {
+					mui.toast('数据加载失败');
+				}
+			},
+			error: function(err) {
+				console.log(err);
+				wt.close();
+			}
+		})
+	}
+
+	//获取设备数据
+	function getPersonData(id) {
+		var token=plus.storage.getItem('token')
+		var p = {
+			seq: '',
+			equip_id: id
+		}
+		p = JSON.stringify(p);
+		var p1 = {
+			equip_id: id,
+			token:token
+		};
+		mui.ajax(localUrl + '/api/user/findAll', {
+			data: p1,
+			dataType: 'json',
+			contentType:'application/json',
+			type: 'post',
+			beforeSend: function (XMLHttpRequest){
+				XMLHttpRequest.setRequestHeader("Authorization", token);
+			},
+			success: function(data) {
+				pinyiTransform(data.data.rows);
+				
+			},
+			error: function(err) {
+				console.log(err);
+				wt.close();
+			}
+		})
+	}
+
+	//转换成字母
+	function pinyiTransform(data) {
+		data.map(function(v, k) {
+			var result = pinyinUtil.getFirstLetter(v.user.name).toUpperCase(),
+				resultAll = pinyinUtil.getPinyin(v.user.name, ' ', false),
+				resultAllStr = '';
+			v.wlhSpell = result;
+			v.wlhFirstSpell = result[0].toUpperCase();
+			resultAll.split(' ').map(function(v1, k1) {
+				resultAllStr += firstUpperCase(v1);
+			})
+			v.wlhAllSpell = resultAllStr;
+		})
+		spellClassify(data);
+	}
+
+	//分类添加
+	function spellClassify(data) {
+		var classifySort = 'abcdefghijklmnopqrstuvwxyz'.toUpperCase().split(''),
+			str = '';
+		classifySort.map(function(v, k) {
+			var index = 0;
+
+			data.map(function(v1, k1) {
+				if(v === v1.wlhFirstSpell) {
+					if(index == 0) {
+						str += '<li data-group="' + v + '" class="mui-table-view-divider mui-indexed-list-group">' + v + '</li>';
+						index++;
+					}
+					
+					var mobile = v1.user.telephone?v1.user.telephone:''
+
+					str += '<li index="' + k1 + '" data-name="' + v1.user.name + '" data-uid="' + v1.id + '"  data-value="' + v1.wlhSpell + '" data-tags="' + v1.wlhAllSpell + '" class="mui-table-view-cell mui-indexed-list-item wlh-org">' +
+						'<div class="wlh-radius">' + v1.user.name.slice(0, 1) + '</div>' +
+						'<div class="wlh-text"><p class="wlh-font">' + v1.user.name + '</p><p class="wlh-font1">' + mobile + '</p></div>' +
+						'<div class="wlh-check"><img src="images/dui.jpg"/></div>' +
+						'</li>';
+
+				}
+			})
+		})
+		document.querySelector('.wlh-list').innerHTML = str;
+		wt.close();
+	}
+
+	//首字母大写
+	function firstUpperCase(str) {
+		return str.toLowerCase().replace(/^\S/g, function(s) {
+			return s.toUpperCase();
+		});
+	}
+</script>

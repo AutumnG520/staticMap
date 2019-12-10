@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>消息</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="css/mui.min.css">
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			
+			.title {
+				margin: 20px 15px 10px;
+				color: #6d6d72;
+				font-size: 15px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<ul id='msg-list' class="mui-table-view">
+				<li class="mui-table-view-cell mui-media" types="toast-msg">
+					<a href="javascript:;">
+						<img class="mui-media-object mui-pull-left" style="margin-top: -2px;" src="images/inform.png">
+						<div class="mui-media-body">
+							通知
+							<p class='mui-ellipsis'>任务状态的变更，任务分发等</p>
+						</div>
+					</a>
+					<span id="toast-msg" class="mui-badge mui-badge-primary">0</span>
+				</li>
+				<li class="mui-table-view-cell mui-media" types="yj-msg">
+					<a href="javascript:;">
+						<img class="mui-media-object mui-pull-left" style="margin-top: -2px;" src="images/msg.png">
+						<div class="mui-media-body">
+							预警
+							<p class='mui-ellipsis'>任务逾期，库存不足，设备分发等</p>
+						</div>
+					</a>
+					<span id="yj-msg" class="mui-badge mui-badge-primary">0</span>
+				</li>
+			</ul>
+		</div>
+	</body>
+	<script src="js/mui.min.js"></script>
+	<script>
+		mui.init({
+			swipeBack: true, //启用右滑关闭功能
+			preloadPages: [{
+					id: 'msgList',
+					url: './page/msgList.html',
+				},
+				{
+					id: 'preAlert',
+					url: './page/preAlert.html',
+				},
+			]
+		});
+		var aniShow = "pop-in";
+		var menu = null,
+			showMenu = false;
+		var isInTransition = false;
+		var _self;
+
+		if(mui.os.android) {
+			//Android平台暂时使用slide-in-right动画
+			if(parseFloat(mui.os.version) < 4.4) {
+				aniShow = "slide-in-right";
+			}
+		}
+
+		var localUid;
+		mui.plusReady(function() {
+			localUid = plus.storage.getItem('uid');
+
+			var len = plus.storage.getItem(localUid + 'yj-msg'); //存到本地
+			var oldtoastmag = plus.storage.getItem(localUid + 'oldWarnMsg'); //通知过的长度
+			var newtoastmsg = Number(len) - parseInt(oldtoastmag) + ""; //要通知的长度
+			if (newtoastmsg<0){newtoastmsg=0}
+			document.getElementById('yj-msg').innerHTML = String(newtoastmsg);
+			// console.log("len: "+len)
+			var len = plus.storage.getItem(localUid + 'toast-msg'); //存到本地
+			var oldtoastmag = plus.storage.getItem(localUid + 'oldToastMsg'); //通知过的长度
+			var newtoastmsg = Number(len) - parseInt(oldtoastmag) + ""; //要通知的长度
+			if (newtoastmsg<0){newtoastmsg=0}
+			document.getElementById('toast-msg').innerHTML = String(newtoastmsg);
+			
+			// plus.webview.currentWebview().reload(true)
+			//读取本地存储，检查是否为首次启动
+			var showGuide = plus.storage.getItem("lauchFlag");
+			//仅支持竖屏显示
+			plus.screen.lockOrientation("portrait-primary");
+			if(showGuide) {
+				//有值，说明已经显示过了，无需显示；
+				//关闭splash页面；
+				plus.webvie.currentWebview().reload(true)
+				plus.navigator.closeSplashscreen();
+				plus.navigator.setFullscreen(false);
+				//预加载
+				preload();
+			} else {
+				//显示启动导航
+			}
+			//绘制顶部图标
+			_self = plus.webview.currentWebview();
+
+			//开启回弹
+			_self.setStyle({
+				bounce: "vertical",
+				bounceBackground: "#efeff4",
+				popGesture: 'none' //首页有侧滑菜单，因此屏蔽首页的侧滑关闭功能
+			});
+
+			//			changemsg();
+
+			//			function changemsg() {
+			//				var tmsg = plus.storage.getItem("toast-msg");
+			//				var ewmsg = plus.storage.getItem('yj-msg');
+			//				document.getElementById('toast-msg').innerText = tmsg;
+			//				document.getElementById('yj-msg').innerText = ewmsg;
+			//			}
+
+		});
+
+		function preload() {
+			//处理侧滑导航，为了避免和子页面初始化等竞争资源，延迟加载侧滑页面；
+		}
+		//主列表点击事件
+		mui('#list').on('tap', 'a', function() {
+			var href = this.getAttribute('href');
+
+			//非plus环境，直接走href跳转
+			if(!mui.os.plus) {
+				location.href = href;
+				return;
+			}
+
+			var id = this.getAttribute("data-wid");
+			if(!id) {
+				id = href;
+			}
+
+			if(href && ~href.indexOf('.html')) {
+				//打开窗口的相关参数
+				var options = {
+					styles: {
+						popGesture: "close"
+					},
+					extras: {}
+				};
+				//如下场景不适用下拉回弹：
+				//1、单webview下拉刷新；2、底部有fixed定位的div的页面
+
+				//图标页面需要启动硬件加速
+
+				var titleType = this.getAttribute("data-title-type");
+				if(titleType && titleType.indexOf("native") > -1) { //原生导航
+
+				} else {
+					//非原生导航，需要设置顶部状态栏占位
+					options.styles.statusbar = {
+						background: "#f7f7f7"
+					}
+				}
+
+				if(id && id == "viewgroup") { //强制启用截屏
+					options.extras.acceleration = "capture";
+				}
+				//打开新窗口
+				mui.openWindow(href, id, options);
+			}
+		});
+
+		mui('#msg-list').on('tap', 'li', function(e) {
+			var listPage = null;
+			var types = this.getAttribute('types');
+			if(types === 'toast-msg') {
+				document.getElementById('toast-msg').innerText = '0';
+				plus.storage.setItem(localUid + "oldToastMsg", plus.storage.getItem(localUid + 'toast-msg'));
+
+				//				var messageObj = plus.push.getAllMessage();
+				//				console.log(messageObj)
+				plus.push.remove({
+					title: '通知消息',
+					payload: 'LocalToastMsg'
+				})
+				//打开
+				mui.openWindow({
+					id: 'msgList',
+					url: './page/msgList.html',
+					styles: {
+						popGesture: "close"
+					},
+					extras: {
+						type: types //自定义扩展参数，可以用来处理页面间传值
+					}
+				});
+			}
+			if(types === 'yj-msg') {
+				document.getElementById('yj-msg').innerText = '0';
+				plus.storage.setItem(localUid + "oldWarnMsg", plus.storage.getItem(localUid + 'yj-msg'));
+
+				//打开
+				mui.openWindow({
+					id: 'preAlertList',
+					url: './page/preAlertList.html',
+					styles: {
+						popGesture: "close"
+					},
+					extras: {
+						type: types //自定义扩展参数，可以用来处理页面间传值
+					}
+				});
+			}
+			//			var h=plus.webview.getSecondWebview();
+			var h = plus.webview.getWebviewById('index')
+			h.evalJS("setmasnum()");
+
+		});
+
+		function warn(msgNum) {
+			//			console.log(msgNum)
+			//			msgNum != 0 ? 
+			document.getElementById('yj-msg').innerHTML = String(msgNum);
+		}
+
+		function toast(msgNum) {
+			//			console.log(msgNum)
+			document.getElementById('toast-msg').innerHTML = String(msgNum);
+		}
+	</script>
+
+</html>

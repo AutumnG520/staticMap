@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>联系人详情</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/util.css">
+		<!--App自定义的css-->
+		<!-- <link rel="stylesheet" type="text/css" href="../css/app.css" /> -->
+		<style>
+			
+			.img_c{
+			        position: relative;
+				    width: 15%;
+				    min-width: 70px;
+				    height: 95px;
+				    overflow: hidden;
+				    top: 15px;
+				    left: 15px;
+				    line-height: 90px;
+				    text-align: center;
+				    font-size: 2.4em;
+				    color: #f7f4f4;
+				    background: #9ad7ef;
+			}
+			.bg_c_16{
+				display: inline-block;
+				width: 16px;
+				height: 16px;
+				position: relative;
+			}
+		</style>
+	</head>
+
+	<body>
+		
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">联系人详情</h1>
+		</header>
+		
+		<div class="mui-content list-view-log">
+			<div id='headers-card' class="" style="min-height: 200px;background: #5c99dc;height: 30%;">
+				<!--<div class="img_c">
+					b
+				</div>
+				<div style="margin-left: 15px;" class="ptrel">
+					<p style="position: absolute;color: #fff;font-size: 1.5em;top: -70px;left: 25%;">blm</p>
+					<p style="position: relative;top: 30px;font-size: 1.0em;color: #cfcfcf;">手机:<span class="mglf-20" style="color: #fff;">17855451646</span></p>
+					<p style="position: relative;font-size: 1.0em;color: #cfcfcf;top: 40px;">电子邮箱:<span class="mglf-20" style="color: #fff;">45645@163.com</span></p>
+				</div>-->
+			</div>
+			
+			<div id="content-card" class="mui-card" style="margin: 5px;min-height: 45px;border-radius: 5px;box-shadow: 0px 3px 9px 2px #cfcfcf;height: 45px;">
+				
+			</div>
+		</div>
+
+		<script src="../js/mui.min.js"></script>
+
+		<script>
+			mui.init({
+				swipeBack:true //启用右滑关闭功能
+			});
+			mui.ready(function() {
+				
+			});
+			
+			mui.plusReady(function() {
+				localUrl = plus.storage.getItem('youranLocalUrl');
+				localUid = plus.storage.getItem('uid');
+				var self = plus.webview.currentWebview();
+					var uid = self.uid;
+				// console.log(uid)
+		      	getDetail(uid);
+			});
+			
+            function getDetail(id){
+				var token=plus.storage.getItem('token')
+                //获得事件参数
+                var p = {	
+							uid:id,
+						};
+					p = JSON.stringify(p);
+					var p1 = {
+						token:token,
+						uid:id
+					};
+                mui.ajax(localUrl+'/api/user/findAll ',{
+                		data: p1,
+						contentType:'application/json',
+						dataType: 'json',
+						type: 'post',
+						beforeSend: function (XMLHttpRequest){
+							XMLHttpRequest.setRequestHeader("Authorization", token);
+						},
+						success: function(data) {
+							console.log(data)
+							p=JSON.parse(p)
+							if(data.code === '0') {
+								data.data.rows.map(function(v,k){
+									if(v.id.toString()===p.uid||v.loginName.toString()===p.uid){
+										chuliData(v);
+									}
+								})
+							} else {
+								mui.toast('数据加载失败');
+							}
+						},
+						error: function(err) {
+							console.log(err);
+						}
+                });
+            }
+            function chuliData(data){
+				console.log(data)
+            	document.getElementById('headers-card').innerHTML=
+            	`<div class="img_c">
+					${data.user.name?data.user.name.charAt(0):''}
+				</div>
+				<div style="margin-left: 15px;" class="ptrel">
+					<p style="position: absolute;color: #fff;font-size: 1.5em;top: -70px;left: 25%;">${data.user.name?data.user.name:''}</p>
+					<p style="position: relative;top: 30px;font-size: 1.0em;color: #cfcfcf;">手机:<span class="mglf-20" style="color: #fff;">${data.user.telephone?data.user.telephone:''}</span></p>
+					<p style="position: relative;font-size: 1.0em;color: #cfcfcf;top: 40px;">电子邮箱:<span class="mglf-20" style="color: #fff;">${data.user.email?data.user.email:''}</span></p>
+				</div>`;
+				var roles=[];
+				for (var i=0;i<data.roles.length;i++){
+					roles.push(data.roles[i].nameCn)
+				}
+				document.getElementById('content-card').innerHTML=
+				`<div style="padding: 10px;">
+					<p>
+						<span><i class="bg_c_16"></i>角色:<span class="mgl-9">${roles}</span></span>
+						<hr size="1" color="#e3e3e3"/>
+					</p>
+				</div>`;
+				/*
+				 * 
+				 * <p>
+						<span><i class="bg_c_16"></i>部门:<span class="mgl-9">${data.user.department[0].name?data.user.department[0].name:""}</span></span>
+						<hr size="1" color="#e3e3e3"/>
+					</p>
+				 * <hr size="1" color="#e3e3e3"/>
+				 * 
+					<p>
+						<span><i class="bg_c_16"></i>备注:<span class="mgl-9">${data.deparement?data.Rmk:''}</span></span>
+						<hr size="1" color="#e3e3e3"/>
+					</p>*/
+            }
+		</script>
+	</body>
+</html>

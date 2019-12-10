@@ -1,0 +1,184 @@
+{
+	"index.html": {
+		"refer": [
+			"page/pullrefresh_main.html",
+			"tab-webview-subpage-setting.html",
+			"tab-webview-subpage-chat.html",
+			"tab-webview-subpage-contact.html",
+			"tab-webview-subpage-about.html",
+			"tab-webview-subpage-my.html",
+			"addressBook.html",
+			"mySetting.html",
+			"task.html",
+			"message.html",
+			"spareList.html"
+		],
+		"resources": [
+			"tab-webview-subpage-about.html",
+			"tab-webview-subpage-chat.html",
+			"message.html"
+		]
+	},
+	"page/pullrefresh_main.html": {
+		"resources": [
+			"page/pullrefresh_sub.html"
+		],
+		"refer": [
+			"page/pullrefresh_sub.html"
+		]
+	},
+	"tab-webview-subpage-about.html": {
+		"refer": [
+			"page/pullrefresh_main.html",
+			"page/rwContent.html"
+		],
+		"resources": []
+	},
+	"page/rwContent.html": {
+		"resources": [
+			"page/rwList.html"
+		],
+		"refer": [
+			"page/rwList.html"
+		]
+	},
+	"page/rwList.html": {
+		"refer": [
+			"page/rwDetail.html",
+			"page/setting.html",
+			"page/add.html",
+			"page/listDetail.html"
+		],
+		"resources": []
+	},
+	"tab-webview-subpage-chat.html": {
+		"refer": [
+			"page/rwContent.html",
+			"page/calendar.html",
+			"page/care.html",
+			"page/new.html"
+		],
+		"resources": []
+	},
+	"login.html": {
+		"refer": [
+			"index.html"
+		],
+		"resources": []
+	},
+	"page/add.html": {
+		"refer": [
+			"page/organization.html",
+			"page/backTitle.html"
+		]
+	},
+	"tab-webview-subpage-contact.html": {
+		"refer": [
+			"page/scan2d.html",
+			"page/bjDetail.html"
+		],
+		"resources": [
+			"page/bjDetail.html"
+		]
+	},
+	"page/calendar.html": {
+		"resources": [
+			"page/rwList.html"
+		],
+		"refer": [
+			"page/rwList.html"
+		]
+	},
+	"page/organization.html": {
+		"refer": [
+			"page/add.html"
+		]
+	},
+	"tab-webview-subpage-my.html": {
+		"refer": [
+			"page/ctactDetails.html"
+		]
+	},
+	"page/new.html": {
+		"resources": [
+			"page/rwList.html"
+		],
+		"refer": [
+			"page/rwList.html"
+		]
+	},
+	"task.html": {
+		"refer": [
+			"page/care.html",
+			"page/calendar.html",
+			"page/rwContent.html",
+			"page/scan2d.html",
+			"page/ctactDetails.html"
+		]
+	},
+	"addressBook.html": {
+		"refer": [
+			"page/ctactDetails.html"
+		]
+	},
+	"mySetting.html": {
+		"refer": [
+			"page/setting.html",
+			"page/messageSetting.html",
+			"page/otherSetting.html",
+			"page/ctactDetails.html"
+		]
+	},
+	"page/backTitle.html": {
+		"resources": [
+			"addressBook.html",
+			"page/accordion.html"
+		],
+		"refer": [
+			"addressBook.html",
+			"page/accordion.html",
+			"page/add.html"
+		]
+	},
+	"spareList.html": {
+		"refer": [
+			"page/bjDetail.html",
+			"page/scan2d.html"
+		]
+	},
+	"message.html": {
+		"refer": [
+			"page/msgList.html",
+			"page/preAlertList.html"
+		]
+	},
+	"page/msgList.html": {
+		"refer": [
+			"page/rwDetail.html",
+			"page/listDetail.html"
+		]
+	},
+	"page/preAlertList.html": {
+		"refer": [
+			"page/rwDetail.html",
+			"page/listDetail.html"
+		]
+	},
+	"page/listDetail.html": {
+		"refer": [
+			"page/backTitle.html"
+		]
+	},
+	"page/scan2d.html": {
+		"refer": [
+			"page/bjDetail.html",
+			"page/rwContent.html",
+			"page/add.html"
+		]
+	},
+	"page/accordion.html": {
+		"resources": [
+			"images/xiala.png"
+		]
+	}
+}

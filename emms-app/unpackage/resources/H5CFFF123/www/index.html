@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="css/mui.min.css">
+		<!--<link rel="stylesheet" type="text/css" href="css/icons-extra.css" />-->
+		<!--<link rel="stylesheet" type="text/css" href="css/app.css" />-->
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header id="index-header" class="mui-bar mui-bar-nav">
+			<a id="index-header-right-top" class="mui-icon-more mui-icon mui-icon-left-nav mui-pull-right mui-hidden"></a>
+			<h1 id="title" class="mui-title">消息</h1>
+		</header>
+		<nav class="mui-bar mui-bar-tab">
+			<a id="defaultTab" class="mui-tab-item mui-active" href="message.html">
+				<span class="mui-icon mui-icon-chat"><span id="msg-badge" class="mui-badge">0</span></span>
+				<span class="mui-tab-label">消息</span>
+			</a>
+			<a class="mui-tab-item" href="task.html">
+				<span class="mui-icon mui-icon-flag"></span>
+				<span class="mui-tab-label">任务</span>
+			</a>
+			<a id="spareListTab" class="mui-tab-item" href="spareList.html">
+				<span class="mui-icon mui-icon-list"></span>
+				<span class="mui-tab-label">备件</span>
+			</a>
+			<a class="mui-tab-item" href="addressBook.html">
+				<span class="mui-icon mui-icon-bars"></span>
+				<span class="mui-tab-label">通讯录</span>
+			</a>
+			<a class="mui-tab-item" href="mySetting.html">
+				<span class="mui-icon mui-icon-contact"></span>
+				<span class="mui-tab-label">我的</span>
+			</a>
+		</nav>
+		<script src="js/mui.min.js"></script>
+		<script src="js/base64.min.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			//mui初始化
+			mui.init({
+				swipeBack: true, //启用右滑关闭功能
+				permissions: {
+					Push: {
+						description: "消息推送"
+					}
+				},
+				preloadPages: {
+					url: './message.html',
+					id: 'message.html'
+				}
+			});
+			var subpages = ['message.html', 'task.html', 'spareList.html', 'addressBook.html', 'mySetting.html'];
+			var subpage_style = {
+				top: '45px',
+				bottom: '51px'
+			};
+
+			var aniShow = {};
+
+			var localUid, localUrl;
+			var localToastMsg = 0,
+				localWarnMsg = 0;
+			mui.plusReady(function() {
+				localUrl = plus.storage.getItem('youranLocalUrl');
+				localUid = plus.storage.getItem('uid');
+
+				document.addEventListener("newintent", openWebviewFromOthers, false);
+
+				plus.push.addEventListener("receive", function(msg) {
+					//					console.log(JSON.stringify(msg))
+					//获取透传数据
+					var data = msg.payload; //JSON.parse(msg.payload);
+					//创建本地消息
+					/* plus.push.createMessage(data.content, data.payload, {
+					     title: data.title,
+					     cover: false
+					 }); */
+				}, false);
+
+				var showGuide = plus.storage.getItem("lauchFlag");
+				//仅支持竖屏显示
+				plus.screen.lockOrientation("portrait-primary");
+				/*
+				 * 初始化消息通知和是否需要通知
+				 * ntc-set:是否通知消息
+				 * ewarn-set:是否通知预警
+				 * oldToastMsg:通知过的消息
+				 * oldWarnMsg:通知过的预警
+				 * toast-msg:消息长度
+				 * yj-msg:预警长度
+				 */
+				if(plus.storage.getItem(localUid + "oldToastMsg") == undefined) {
+					plus.storage.setItem(localUid + "oldToastMsg", "0");
+				}
+				if(plus.storage.getItem(localUid + 'oldWarnMsg') == undefined) {
+					plus.storage.setItem(localUid + 'oldWarnMsg', "0");
+				}
+				if(plus.storage.getItem('ntc-set') == undefined) {
+					plus.storage.setItem('ntc-set', 'true')
+				}
+				if(plus.storage.getItem('ewarn-set') == undefined) {
+					plus.storage.setItem('ewarn-set', 'true')
+				}
+
+				gettoast();
+				getDataRw();
+
+				var self = plus.webview.currentWebview();
+				//创建子页面，首个选项卡页面显示，其它均隐藏；
+				for(var i = 0; i < 5; i++) {
+					var temp = {};
+					var sub = plus.webview.create(subpages[i], subpages[i], subpage_style);
+					if(i > 0) {
+						sub.hide();
+					} else {
+						temp[subpages[i]] = "true";
+						mui.extend(aniShow, temp);
+					}
+					self.append(sub);
+				}
+				//console.log(JSON.stringify(aniShow));
+			});
+			//当前激活选项
+			var activeTab = subpages[0];
+			var title = document.getElementById("title");
+			//选项卡点击事件
+			mui('.mui-bar-tab').on('tap', 'a', function(e) {
+				var targetTab = this.getAttribute('href');
+				if(targetTab == activeTab) {
+					return;
+				}
+
+				//更换标题
+				title.innerHTML = this.querySelector('.mui-tab-label').innerHTML;
+				//显示目标选项卡
+				//若为iOS平台或非首次显示，则直接显示
+				if(mui.os.ios || aniShow[targetTab]) {
+					plus.webview.show(targetTab);
+				} else {
+					//否则，使用fade-in动画，且保存变量
+					var temp = {};
+					temp[targetTab] = "true";
+					mui.extend(aniShow, temp);
+//					plus.webview.show(targetTab, "fade-in", 300);
+					plus.webview.show(targetTab, "slide-in-left", 500);
+				}
+
+				//隐藏当前;
+				plus.webview.hide(activeTab);
+				//更改当前活跃的选项卡
+				activeTab = targetTab;
+				// console.log(activeTab)
+				if(activeTab == 'spareList.html'||activeTab == 'task.html') {
+					document.getElementById("index-header-right-top").classList.remove("mui-hidden")
+					// console.log(document.getElementById("index-header-right-top").classList)
+				}else{
+					document.getElementById("index-header-right-top").classList.add("mui-hidden")
+					
+				}
+			});
+
+			//自定义事件，模拟点击“首页选项卡”
+			document.addEventListener('gohome', function() {
+				var defaultTab = document.getElementById("defaultTab");
+				//模拟首页点击
+				mui.trigger(defaultTab, 'tap');
+				//切换选项卡高亮
+				var current = document.querySelector(".mui-bar-tab>.mui-tab-item.mui-active");
+				if(defaultTab !== current) {
+					current.classList.remove('mui-active');
+					defaultTab.classList.add('mui-active');
+				}
+			},false);
+
+			mui('#index-header').on('tap', 'a', function() {
+				var contentWebview = plus.webview.getWebviewById(activeTab);
+				if(activeTab == 'spareList.html') {
+					contentWebview.evalJS("shownpop()");
+				} else if(activeTab === 'task.html') {
+					contentWebview.evalJS("shownpop()");
+				}
+			}, {
+				passive: false
+			});
+
+			var _toast = false;
+
+			mui.back = function() {
+				if(!_toast || !_toast.isVisible()) {
+					_toast = mui.toast('再按一次返回键退出<br>点此可&nbsp;<span style="border-bottom:1px solid #fff" onclick="openFeedback();">反馈意见</span>', {
+						duration: 'long',
+						type: 'div'
+					});
+				} else {
+					plus.runtime.quit();
+				}
+			}
+
+			setInterval(function() {
+				gettoast()
+				getDataRw()
+			}, 60000)
+
+			function jump() {
+				var spareListTab = document.querySelector('#spareListTab');
+				mui.trigger(spareListTab,'tap');
+				var defaultTab = document.getElementById("defaultTab");
+				//模拟首页点击
+//				mui.trigger(defaultTab, 'tap');
+				//切换选项卡高亮
+				var current = document.querySelector(".mui-bar-tab>.mui-tab-item.mui-active");
+				if(defaultTab !== current) {
+					current.classList.remove('mui-active');
+					spareListTab.classList.add('mui-active');
+				}
+			
+			}
+
+			function getDataRw() {
+				var token=plus.storage.getItem("token")
+				var now = getNowFormatDate();
+				mui.ajax(localUrl + '/api/inform/getAll', {
+					dataType: 'json',
+					type: 'get',
+					beforeSend: function (XMLHttpRequest){
+						XMLHttpRequest.setRequestHeader("Authorization", token);
+					},
+					success: function(data) {
+						//						console.log(JSON.stringify(data))
+						if(data.code == 2) {
+							mui.toast("操作失败!");
+							return;
+						} else if(data.code == 1) {
+							mui.toast('无效的请求');
+							return;
+						}
+						var count=0;
+						for (var i=0; i<data.data.length;i++)
+						{
+							if (data.data[i].infoType==1)
+							{
+								count=count+1
+							}
+						}
+						// console.log("yj: "+count)
+						var ewarnmsg = count; //获取当前通知列表长度
+						var oldtoastmag = plus.storage.getItem(localUid + 'oldWarnMsg'); //通知过的长度
+						var newtoastmsg = ewarnmsg - parseInt(oldtoastmag) + ""; //要通知的长度
+						plus.storage.setItem(localUid + 'yj-msg', String(ewarnmsg)); //存到本地
+						if(localWarnMsg != newtoastmsg) {
+							localWarnMsg = newtoastmsg
+						} else {
+							return
+						}
+						setmasnum(newtoastmsg);
+						//更新变动条数
+						let view = plus.webview.getWebviewById('message.html');
+						view.evalJS("warn('" + newtoastmsg + "')");
+						var options = {
+							cover: false,
+							title: '预警消息'
+						};
+
+						if(plus.storage.getItem('ewarn-set') == 'true' && Number(newtoastmsg) > 0) {
+							plus.push.createMessage(newtoastmsg + "条预警信息", "LocalWarnMsg", options);
+						}
+					},
+					error: function(err) {
+						console.log(err)
+					}
+				})
+			}
+
+			function gettoast() {
+				var token=plus.storage.getItem("token")
+				mui.ajax(localUrl + '/api/inform/getAll', {
+					dataType: 'json',
+					type: 'get',
+					beforeSend: function (XMLHttpRequest){
+						XMLHttpRequest.setRequestHeader("Authorization", token);
+					},
+					success: function(data) {
+						var count=0;
+						for (var i=0; i<data.data.length;i++)
+						{
+							if (data.data[i].infoType==0)
+							{
+								count=count+1
+							}
+						}
+						// console.log("toast: "+count)
+						var toastmsg = count;
+						var oldtoastmag = plus.storage.getItem(localUid + "oldToastMsg");
+						var newtoastmsg = toastmsg - parseInt(oldtoastmag) + "";
+						plus.storage.setItem(localUid + "toast-msg", String(toastmsg));
+						if(localToastMsg != newtoastmsg) {
+							localToastMsg = newtoastmsg
+						} else { 
+							return
+						}
+						setmasnum(newtoastmsg);
+						//更新变动条数
+						var view = plus.webview.getWebviewById('message.html');
+						view.evalJS("toast('" + newtoastmsg + "')");
+
+						var options = {
+							cover: false,
+							title: '通知消息'
+						};
+						if(plus.storage.getItem('ntc-set') == 'true' && Number(newtoastmsg) > 0) {
+							plus.push.createMessage(newtoastmsg + "条通知", "LocalToastMsg", options);
+						}
+
+						//var sonview = plus.webview.getWebviewById('message.html');
+						//sonview.evalJS("changemsg()"); 
+					},
+					error: function(err) {
+						// console.log(err)
+					}
+				})
+			}
+
+			function setmasnum(num) {
+				var toastNumTotal = plus.storage.getItem(localUid + 'toast-msg'),
+					toastNumOld = plus.storage.getItem(localUid + 'oldToastMsg'),
+					toastNum = Number(toastNumTotal) - Number(toastNumOld),
+					
+					warnNumTotal = plus.storage.getItem(localUid + 'yj-msg'),
+					warnNumOld = plus.storage.getItem(localUid + 'oldWarnMsg'),
+					warnNum = Number(warnNumTotal) - Number(warnNumOld)
+					if (toastNum<0){toastNum=0}
+					if (warnNum<0){warnNum=0}
+					
+				var	allmsg = toastNum + warnNum;
+				document.getElementById('msg-badge').innerText = allmsg;
+			}
+
+			function getNowFormatDate() {
+				var date = new Date();
+				var seperator1 = "-";
+				var year = date.getFullYear();
+				var month = date.getMonth() + 1;
+				var strDate = date.getDate();
+				if(month >= 1 && month <= 9) {
+					month = "0" + month;
+				}
+				if(strDate >= 0 && strDate <= 9) {
+					strDate = "0" + strDate;
+				}
+
+				var hours = date.getHours();
+				var min = date.getMinutes();
+				var sec = date.getSeconds();
+				if(date.getHours() < 10) hours = 0 + "" + date.getHours();
+				if(date.getMinutes() < 10) min = 0 + "" + date.getHours();
+				if(date.getSeconds() < 10) sec = 0 + "" + date.getSeconds();
+
+				var currentdate = year + seperator1 + month + seperator1 + strDate + ' ' + hours + ":" + min; //+":"+sec
+				return currentdate;
+			}
+			// 扩展API加载完毕后调用onPlusReady回调函数  
+			/*document.addEventListener( "plusready", onPlusReady, false );  
+			function onPlusReady() {  
+				
+			}*/
+			function onNetIntent() {
+				// 获取新意图传入的参数  
+				var args = plus.runtime.arguments;
+				// 处理意图事件  
+			}
+			//获取通知栏（app未启动）点击、第三方程序启动本app
+			function openWebviewFromOthers() {
+				var args = plus.runtime.arguments;
+				console.log(args)
+			}
+		</script>
+	</body>
+
+</html>

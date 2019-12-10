@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>备件详情页</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/util.css">
+		<!--App自定义的css-->
+		<!-- <link rel="stylesheet" type="text/css" href="../css/app.css" /> -->
+		<style>
+			@-webkit-keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			@keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			@-webkit-keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			
+			@keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			
+			.img_c {
+				position: relative;
+				width: 20%;
+				min-width: 120px;
+				height: 90px;
+				border: 1px solid #ccc;
+				overflow: hidden;
+				top: 15px;
+				left: 15px;
+			}
+			
+			.bg_c_16 {
+				display: inline-block;
+				width: 16px;
+				height: 16px;
+				position: relative;
+			}
+			
+			#popover {
+				position: fixed;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);
+			}
+			
+			.popover-title {
+				font-size: 20px;
+				padding: 10px 10px 0 10px;
+			}
+			
+			.cancel {
+				margin-right: 30px;
+				float: right;
+			}
+			
+			.confirm {
+				float: right;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">备件详情</h1>
+		</header>
+
+		<div class="mui-content list-view-log">
+			<div id='headers-card' class="" style="min-height: 200px;background: #5c99dc;height: 30%;">
+
+			</div>
+
+			<div id="content-card" class="mui-card" style="margin: 5px;min-height: 280px;border-radius: 5px;box-shadow: 0px 0px 9px 1px #cfcfcf;height: 45%;" </div>
+			</div>
+		</div>
+		<!-- 弹出框 -->
+		<div id="popover" class="mui-popover">
+			<p class="popover-title">备件入库</p>
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<p>请输入入库数目</p>
+					<input type="number" class="put-num" />
+				</li>
+				<li class="mui-table-view-cell">
+					<p>请输入入库价格</p>
+					<input type="text" class="put-price" />
+				</li>
+				<li class="mui-table-view-cell">
+
+					<div class="confirm">确认</div>
+					<div class="cancel">取消</div>
+				</li>
+			</ul>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/base64.min.js"></script>
+
+		<script>
+			mui.init({
+				swipeBack: true, //启用右滑关闭功能
+			});
+			mui.ready(function() {
+//				alert(1)
+			});
+
+			var newId = '';
+
+			mui.plusReady(function() {
+				localUrl = plus.storage.getItem('youranLocalUrl');
+				localUid = plus.storage.getItem('uid');
+
+				var self = plus.webview.currentWebview();
+				// console.log(self)
+				var cd = self.cd,
+					type = self.type;
+					// if(!cd){cd=self.key}
+					// alert(cd)
+				//				cd = plus.storage.getItem('cd');
+				getDetail(cd, type);
+			});
+			
+            
+            
+            
+			function getDetail(id, type) {
+				var token=plus.storage.getItem("token")
+				//获得事件参数
+				if(!type) {
+					var p = {
+						id: id
+					};
+					p = Base64.encode(JSON.stringify(p));
+				} else {
+					var p = id;
+					if(type === 'put') {
+						mui('#popover').popover('show');
+						clickEvent();
+					}
+				}
+				var p1 = {
+					param: p
+				};
+				//var nwaiting = plus.nativeUI.showWaiting();
+				mui.ajax(localUrl + '/api/spare/findAll ', {
+					data: p1,
+					dataType: 'json',
+					contentType:'application/json',
+					type: 'post',
+					beforeSend: function (XMLHttpRequest){
+						XMLHttpRequest.setRequestHeader("Authorization", token);
+					},
+					success: function(data) {
+//						console.log(data.data.rows)
+						//nwaiting.close();
+						if(data.code === '0') {
+							data.data.rows.map(function(v,k){
+							if(v.partId.toString()===id){
+								newId = v.partId;
+								chuliData(v);
+						}})} else {
+							
+							mui.toast('数据加载失败');
+						}
+					},
+					error: function(err) {
+						//nwaiting.close();
+						console.log(err);
+					}
+				});
+			}
+
+			function chuliData(data) {
+			// console.log(data);
+				var imgSrc = data.avatars[0]?localUrl+'/equip_pic/' +data.avatars[0].name: '../images/img_device_default.png';
+				// console.log(imgSrc)
+				document.getElementById('headers-card').innerHTML = `<div class="img_c">
+					<img width="100%" src='${imgSrc}'>
+				</div>
+				<div style="margin-left: 15px;" class="ptrel">
+				<p style="position: absolute;color: #fff;font-size: 1.5em;top: -45px;left: 38%;">${data.nameCn?data.nameCn:''}</p>
+				<p style="position: relative;top: 30px;font-size: 1.0em;color: #cfcfcf;">备件编号:<span class="mglf-20" style="color: #fff;">${data.no?data.no:''}</span></p>
+				<p style="position: relative;font-size: 1.0em;color: #cfcfcf;top: 40px;">设备名称:<span class="mglf-20" style="color: #fff;">${data.equipName?data.equipName:''}</span></p>
+				</div>`;
+//				console.log(data)
+				document.getElementById('content-card').innerHTML =
+					`<div style="padding: 10px;">
+					<p>
+						<span><i class="bg_c_16"></i>型号规格:<span class="mgl-9">${data.specification?data.specification:''}</span></span>
+						<hr size="1" color="#e3e3e3"/>
+					</p>
+					<p>
+						<span><i class="bg_c_16"></i>位置:<span class="mgl-9">${data.position?data.position:''}</span></span>
+						<hr size="1" color="#e3e3e3"/>
+					</p>
+					<p>
+						<span><i class="bg_c_16"></i>备件数量:<span class="mgl-9">${data.amount?data.amount:''}${data.amountUnit?data.amountUnit:''}</span></span>
+						<hr size="1" color="#e3e3e3"/>
+					</p>
+					<p>
+						<span><i class="bg_c_16"></i>单价:<span class="mgl-9">${data.unitPrice?data.unitPrice:''}元</span></span>
+						<hr size="1" color="#e3e3e3"/>
+					</p>
+					<p>
+						<span><i class="bg_c_16"></i>购买周期:<span class="mgl-9">${data.purchCycle?data.purchCycle:''}${data.purchCycleUnit?data.purchCycleUnit:''}</span></span>
+						<hr size="1" color="#e3e3e3"/>
+					</p>
+					<p>
+						<span><i class="bg_c_16"></i>库存:<span class="mgl-9">${data.stockAmount?data.stockAmount:'0'}${data.amountUnit?data.amountUnit:''}</span></span>
+						<hr size="1" color="#e3e3e3"/>
+					</p>
+					<p>
+						<span><i class="bg_c_16"></i>安全库存:<span class="mgl-9">${data.safetyStockAmount?data.safetyStockAmount:'0'}${data.amountUnit?data.amountUnit	:''}</span></span>
+						<hr size="1" color="#e3e3e3"/>
+					</p>
+					<p>
+						<span><i class="bg_c_16"></i>供应商:<span class="mgl-9">${data.supplier?data.supplier:'0'}</span></span>
+						<hr size="1" color="#e3e3e3"/>
+					</p>
+				</div>`;
+			}
+
+			function clickEvent() {
+				var cancel = document.querySelector('.cancel'),
+					confirm = document.querySelector('.confirm'),
+					putPrice = document.querySelector('.put-price'),
+					putNum = document.querySelector('.put-num');
+				cancel.addEventListener('tap', function() {
+					plus.webview.currentWebview().close();
+					mui.back();
+				})
+				confirm.addEventListener('tap', function() {
+					if(!putNum.value) {
+						mui.toast('请输入入库数目')
+					} else if(!putPrice.value) {
+						mui.toast('请输入入库价格')
+					}
+					putAjax(putPrice.value, putNum.value);
+				})
+
+			}
+
+			function putAjax(price, num) {
+				var token =plus.storage.getItem("token")
+				var p1 = {
+					// param: p
+					updater: localUid,
+					partId: newId,
+					amount: num,
+					unitPrice: price,
+					updateTime: nowDate()
+				};
+				//var nwaiting = plus.nativeUI.showWaiting();
+				mui.ajax(localUrl + '/api/spare/storage', {
+					data: p1,
+					dataType: 'json',
+					type: 'get',
+					beforeSend: function (XMLHttpRequest){
+						XMLHttpRequest.setRequestHeader("Authorization", token);
+					},
+					success: function(data) {
+						//nwaiting.close();
+						if(data.code == 0) {
+							mui.toast('入库成功');
+							//							mui.back();
+							plus.webview.currentWebview().close();
+						} else {
+							mui.toast('入库失败');
+						}
+					},
+					error: function(err) {
+						mui.toast('入库失败');
+
+						//nwaiting.close();
+						console.log(err);
+					}
+				});
+			}
+
+			function nowDate() {
+				var date = new Date();
+				return date.getFullYear() + "-" + addZero(date.getMonth() + 1) + "-" + addZero(date.getDate()) + ' ' + addZero(date.getHours()) + ':' + addZero(date.getMinutes()) + ':' +
+					addZero(date.getSeconds());
+			}
+
+			function addZero(e) {
+				if(e > 9) {
+					return e;
+				} else if(e < 10) {
+					return '0' + e;
+				}
+			}
+		</script>
+	</body>
+
+</html>

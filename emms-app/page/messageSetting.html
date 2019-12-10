@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>消息设置页</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/util.css">
+		<!--App自定义的css-->
+		<!-- <link rel="stylesheet" type="text/css" href="../css/app.css" /> -->
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">消息设置</h1>
+		</header>
+		<div class="mui-content">
+
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<div class="mui-input-row mui-checkbox">
+						<input name="ntc-set" id="ntc-set" value="1" class="service-halt" type="checkbox" checked>
+						<label>启用通知推送</label>
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div class="mui-input-row mui-checkbox">
+						<input name="ewarn-set" id="ewarn-set" value="1" class="service-halt" type="checkbox" checked>
+						<label>启用预警推送</label>
+					</div>
+				</li>
+			</ul>
+
+		</div>
+
+		<script src="../js/mui.min.js"></script>
+
+		<script>
+			mui.init({
+				swipeBack: true, //启用右滑关闭功能
+				permissions: {
+					Push: {
+						description: "消息推送"
+					}
+				}
+			});
+			if(window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener('plusready', plusReady, false);
+			}
+
+			function plusReady() {
+				var ntc_set = plus.storage.getItem('ntc-set');
+				if(ntc_set === 'false'){
+					ntc_set = false
+				}
+				document.getElementById('ntc-set').checked = ntc_set;
+
+				var ewarn_set = plus.storage.getItem('ewarn-set');
+				if(ewarn_set === 'false'){
+					ewarn_set = false
+				}
+				document.getElementById('ewarn-set').checked = ewarn_set;
+
+				document.getElementById('ntc-set').onclick = function() {
+					
+					plus.storage.setItem('ntc-set', String(this.checked));
+					
+				}
+
+				document.getElementById('ewarn-set').onclick = function() {
+					plus.storage.setItem('ewarn-set', String(this.checked))
+				}
+			}
+
+			mui.ready(function() {
+
+			});
+
+			/*// 监听plusready事件  
+			document.addEventListener( "plusready", function(){
+				// 扩展API加载完毕，现在可以正常调用扩展API
+				// 添加监听从系统消息中心点击某条消息启动应用事件
+				plus.push.addEventListener( "click", function ( msg ) {
+					// 分析msg.payload处理业务逻辑 
+					alert( "You clicked: " + msg.content ); 
+				}, false ); 
+			}, false );*/
+		</script>
+	</body>
+
+</html>

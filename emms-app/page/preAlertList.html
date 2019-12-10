@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta http-equiv="Access-Control-Allow-Origin" content="">
+		<meta http-equiv="content-security-policy">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/util.css">
+		<style>
+			.mui-card-header img {
+				width: 21px;
+				/*margin-top:2px ;*/
+			}
+			
+			a {
+				color: #333333;
+			}
+			
+			.mui-plus .plus {
+				display: inline;
+			}
+			
+			.plus {
+				display: none;
+			}
+			
+			#topPopover {
+				position: fixed;
+				top: 16px;
+				right: 6px;
+			}
+			
+			#topPopover .mui-popover-arrow {
+				left: auto;
+				right: 6px;
+			}
+			/*p {
+				text-indent: 22px;
+			}*/
+			
+			span.mui-icon {
+				font-size: 14px;
+				color: #007aff;
+				margin-left: -15px;
+				padding-right: 10px;
+			}
+			
+			.mui-popover {
+				height: 350px;
+			}
+			
+			.wlh-radius {
+				border-radius: 10px;
+			}
+			
+			.wlh-care {
+				margin-top: 5px;
+			}
+			
+			.wlh-test {
+				height: 0px;
+			}
+			
+			.wlh-test1 {
+				height: 25px;
+			}
+			
+			.wlh-algin {
+				text-align: center;
+				margin-top: 50px;
+				color: #333;
+			}
+			
+			.wlh-ts {
+				margin-top: 40px;
+				text-align: center;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a id="back" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="title" class="mui-title">预警</h1>
+		</header>
+		<!--下拉刷新容器-->
+		<div id="pullrefresh" class="mui-content">
+			<div id="list" class="mui-scroll mg0">
+				<!--数据列表-->
+
+			</div>
+		</div>
+		<div class="ptfix" style="bottom: 20px;right: 10px;z-index: 1000;">
+
+		</div>
+		<div id="topPopover" class="mui-popover">
+			<div class="mui-popover-arrow"></div>
+			<div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<ul id="opselects" class="mui-table-view">
+						<li class="mui-table-view-cell">
+							<a href="#" types='0'>分配我的</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a href="#" types='1'>我派发的</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a href="#" types='2'>报告我的</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a href="#" types='3'>我参与的</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a href="#" types='4'>已完成的</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a href="#" types='5'>已确认的</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a href="#" types='6'>我关注的</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a href="#" types='7'>我管理的</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/template-web.js"></script>
+		<script src="../js/base64.min.js"></script>
+		<script id="test" type="text/html">
+			{{each $data}}{{if $value.infoType===1}}
+			{{if $value.contentType!==3}}{{if $value.detail.equipDetail}}
+			<a href="listDetail.html" key='{{ $value.attachId }}'>
+				<div class="mui-card wlh-radius" style="height: 140px;">
+					{{if $value.contentType == 3}}
+						<div class="FL colW10 ptrel" style="height: 100%;background-color: #90EE90;">
+							<p class=" wlh-algin">库存<br>不足</p>
+					{{else if $value.contentType == 4}}
+						<div class="FL colW10 ptrel" style="height: 100%;background-color: #D2691E;">
+							<p class=" wlh-algin">预<br>警</p>
+					{{else if $value.contentType == 2}}
+						<div class="FL colW10 ptrel" style="height: 100%;background-color: #CDAD00;">
+							<p class=" wlh-algin">逾<br>期</p>
+					{{/if}}
+						</div>
+							<div class="FL colW90">
+								<div class="mui-card-header wlh-test t-c">
+									<p class="FL mg0 colW50 t-l textApostrophe">{{$value.detail.taskDetail.taskType.name}}:{{ $value.detail.equipDetail[0].equipName }}</p>
+									<p class="FR mg0 colW25 F12">ID: {{ $value.detail.equipDetail[0].equipId }}</p>
+									<p class="FR mg0 colW20 F12 bdCir5 bdccc">
+										{{$value.detail.taskDetail.progress.name}}
+									</p>
+									<!--<p class="FR mg0 colW10 pd-lr10 wlh-care">
+										{{if $value.care == 0}}
+										<img src="../images/start.png" data-id="{{$value.taskid}}" /> {{else}}
+										<img src="../images/start-1.png" data-id="{{$value.taskid}}" /> {{/if}}
+									</p>-->
+								</div>
+								<div class="mui-card-content">
+									<div class="mui-card-content-inner">
+										<div class="FL colW100 wlh-test1">
+											<p class="FL colW5 "><img src="../images/user.png" /></p>
+											<p class="FL colW95 pd-l5">
+												{{each $value.detail.taskDetail.actor}} {{$value.name}} {{/each}}
+											</p>
+										</div>
+										<div class="FL colW100 wlh-test1">
+											<p class="FL colW5 "><img src="../images/home-2.png" /></p>
+											<p class="FL colW95 pd-l5">{{ $value.detail.equipDetail[0].position?$value.detail.equipDetail[0].position:'未知'}}</p>
+										</div>
+										<div class="FL colW100 wlh-test1">
+											<p class="FL colW5 "><img src="../images/time.png" /></p>
+											<p class="FL colW95 pd-l5">{{ $value.detail.taskDetail.endDate }} </p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+			</a>
+			{{/if}}
+			{{else}}
+			<a href="bjDetail.html" cd='{{ $value.attachId }}' >
+			
+				<div class="mui-card wlh-radius" style="height: 140px;">
+					{{if $value.contentType == 3}}
+						<div class="FL colW10 ptrel" style="height: 100%;background-color: #90EE90;">
+							<p class=" wlh-algin">库存<br>不足</p>
+					{{else if $value.contentType == 4}}
+						<div class="FL colW10 ptrel" style="height: 100%;background-color: #D2691E;">
+							<p class=" wlh-algin">预<br>警</p>
+					{{else if $value.contentType == 2}}
+						<div class="FL colW10 ptrel" style="height: 100%;background-color: #CDAD00;">
+							<p class=" wlh-algin">逾<br>期</p>
+					{{/if}}
+						</div>
+							<div class="FL colW90">
+								<div class="mui-card-header wlh-test t-c">
+									<p class="FL mg0 colW50 t-l textApostrophe">{{ $value.detail.nameCn }}</p>
+									<p class="FR mg0 colW25 F12">{{ $value.detail.no }}</p>
+
+									<!--<p class="FR mg0 colW10 pd-lr10 wlh-care">
+										{{if $value.care == 0}}
+										<img src="../images/start.png" data-id="{{$value.taskid}}" /> {{else}}
+										<img src="../images/start-1.png" data-id="{{$value.taskid}}" /> {{/if}}
+									</p>-->
+								</div>
+								<div class="mui-card-content">
+									<div class="mui-card-content-inner">
+										<div class="FL colW100 wlh-test1">
+											<p class="FL colW95 ">供应商：</p>
+											<p class="FL colW95 pd-l5">
+												{{($value.detail.supplier.length<15)?$value.detail.supplier:$value.detail.supplier.substring(0,8)+"..."}}
+											</p>
+										</div>
+										<div class="FL colW100 wlh-test1">
+											<p class="FL colW95 ">所在位置：</p>
+											<p class="FL colW95 pd-l5">{{ $value.detail.position?$value.detail.position:'未知'}}</p>
+										</div>
+										<div class="FL colW100 wlh-test1">
+											<p class="FL colW95 ">备件数量：</p>
+											<p class="FL colW95 pd-l5">{{$value.detail.amount}}</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						</a>
+			{{/if}}
+			
+			{{/if}}
+			{{/each}}
+		</script>
+		<script>
+			var keepState = '';
+			mui.init({
+				// pullRefresh: {
+					// container: '#pullrefresh',
+					// down: {
+						// callback: pulldownRefresh
+					// },
+					// up: {
+						// contentrefresh: '正在加载...',
+						//callback: pullupRefresh
+					// }
+				// }
+			});
+			var page = 1;
+			/**
+			 * 下拉刷新具体业务实现
+			 */
+			function pulldownRefresh() {
+								// setTimeout(function() {
+								// page = 1;
+				var index = keepState ? keepState : 0;
+				getDataRw(index, 'dowm')
+								// }, 1500);
+			}
+			var count = 0;
+			/**
+			 * 上拉加载具体业务实现
+			 */
+			//			function pullupRefresh() {
+			//				setTimeout(function() {
+			//				getDataRw(++page, 'up')
+			//				}, 1500);
+			//			}
+			if(window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener('plusready', plusReady, false);
+			}
+
+			function plusReady() {
+				localUrl = plus.storage.getItem('youranLocalUrl');
+				localUid = plus.storage.getItem('uid');
+				// console.log(localUid);
+				//nwaiting = plus.nativeUI.showWaiting();
+				//判断是否可以添加
+				var addType = getType();
+				if(addType == 2) {
+					var addDom = document.querySelector('.ptfix')
+					addDom.innerHTML = '<a href="add.html"><img src="../images/add.png" /></a>';
+				}
+			} //获取传参type
+			function getType() {
+				var self = plus.webview.currentWebview();
+				var type = self.type;
+				return type;
+			}
+
+			mui.plusReady(function() {
+				pulldownRefresh();
+				mui('body').on('tap', 'a', function() {
+					var href = this.getAttribute('href');
+					//非plus环境，直接走href跳转
+					if(!mui.os.plus) {
+						location.href = href;
+						return;
+					}
+					var id = this.getAttribute("data-wid");
+					if(!id) {
+						id = href;
+					}
+					if(href && ~href.indexOf('.html')) {
+						//打开窗口的相关参数
+
+						//如下场景不适用下拉回弹：
+						//1、单webview下拉刷新；2、底部有fixed定位的div的页面
+
+						//图标页面需要启动硬件加速
+
+						var cd = this.getAttribute("cd");
+						var key = this.getAttribute("key");
+						this.getAttribute("data-wid");
+						var options = {
+							styles: {
+								popGesture: "close"
+							},
+							styles: {
+								popGesture: "close"
+							},
+							show: {
+								aniShow: 'pop-in'
+							},
+							waiting: {
+								autoShow: true
+							},
+							extras: {
+								cd:cd,
+								key:key
+							}
+						};
+						//非原生导航，需要设置顶部状态栏占位
+						options.styles.statusbar = {
+							background: "#f7f7f7"
+						}
+
+						if(id && id == "viewgroup") { //强制启用截屏
+							options.extras.acceleration = "capture";
+						}
+						//打开新窗口
+						mui.openWindow(href, id, options);
+					}
+				});
+
+			});
+
+			//pulldownRefresh()
+
+			function getDataRw(index, action) {
+				var now = getNowFormatDate();
+				var token=plus.storage.getItem("token")
+				var p1 = {
+					uid:localUid
+				}
+				var nwaiting = plus.nativeUI.showWaiting();
+				mui.ajax(localUrl +'/api/inform/getAll', {
+					// data: p1,
+					dataType: 'json',
+					type: 'get',
+					beforeSend: function (XMLHttpRequest){
+						XMLHttpRequest.setRequestHeader("Authorization", token);
+					},
+					success: function(data) {
+						console.log(data);
+						nwaiting.close();
+						if(data.code==2){
+							mui.toast("操作失败!");
+							return;
+						}else if(data.code==1){
+							mui.toast('无效的请求');
+							return;
+						}
+						//自定义函数
+						var html = template("test", data.data);
+						
+						if(action == 'dowm') {
+							if(data.data.length == 0) {
+								document.getElementById('list').innerHTML = '<p class="wlh-ts">暂时没有数据</p>'
+							} else {
+								document.getElementById('list').innerHTML = html;
+							}
+							//mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+
+						} else {
+							//mui('#pullrefresh').pullRefresh().endPullupToRefresh((data.length == 0));
+							if(data.data.length == 0) return
+							document.getElementById('list').innerHTML = document.getElementById('list').innerHTML + html
+							//参数为true代表没有更多数据了。
+						}
+					},
+					error: function(err) {
+						nwaiting.close();
+						console.log(err)
+					}
+				})
+			}
+
+			function getNowFormatDate() {
+				var date = new Date();
+				var seperator1 = "-";
+				var year = date.getFullYear();
+				var month = date.getMonth() + 1;
+				var strDate = date.getDate();
+				if(month >= 1 && month <= 9) {
+					month = "0" + month;
+				}
+				if(strDate >= 0 && strDate <= 9) {
+					strDate = "0" + strDate;
+				}
+				
+				var hours = date.getHours();
+			    var min = date.getMinutes();
+			    var sec = date.getSeconds();
+			    if(date.getHours() < 10) hours = 0+""+date.getHours();
+			    if(date.getMinutes() < 10) min = 0+""+date.getHours();
+			    if(date.getSeconds() < 10) sec = 0+""+date.getSeconds();
+			    
+				var currentdate = year + seperator1 + month + seperator1 + strDate +' '+hours+":"+min;//+":"+sec
+				return currentdate;
+			}
+		</script>
+		<script>
+			//mui('.mui-scroll-wrapper').scroll();
+			function shownpop() {
+				mui('#topPopover').popover('toggle');
+			}
+
+			mui('body').on('shown', '.mui-popover', function(e) {
+				//console.log('shown', e.detail.id);//detail为当前popover元素
+			});
+
+			mui('body').on('hidden', '.mui-popover', function(e) {
+				//console.log('hidden', e.detail.id);//detail为当前popover元素
+			});
+
+			//关注操作
+			// mui('body').on('tap', '.wlh-care img', function(e) {
+			// 	var index = this.src.indexOf('images/') + 7,
+			// 		src = this.src.slice(index),
+			// 		_self = this,
+			// 		id = this.getAttribute('data-id'),
+			// 		care = '';
+			// 	if(src == 'start.png') {
+			// 		care = 1;
+			// 	} else {
+			// 		care = 0;
+			// 	}
+			// 	// careAjax(_self, care, id);
+			// 	e.stopPropagation();
+			// })
+
+			//关注ajax请求
+			// function careAjax(dom, index, id) {
+			// 	var p = {
+			// 		seq: '',
+			// 		taskid: id,
+			// 		care: index
+			// 	}
+			// 	p = JSON.stringify(p)
+			// 	p = Base64.encode(p)
+			// 	var p1 = {
+			// 		param: p
+			// 	}
+			// 	//				var nwaiting = plus.nativeUI.showWaiting();
+			// 	mui.ajax(localUrl + '/maintenance?', {
+			// 		data: p1,
+			// 		dataType: 'json',
+			// 		type: 'get',
+			// 		success: function(data) {
+			// 			if(data.eid === 0) {
+			// 				var newPath = '';
+			// 				if(index == 1) {
+			// 					newPath = 'start-1.png';
+			// 				} else if(index == 0) {
+			// 					newPath = 'start.png';
+			// 				}
+			// 				dom.src = '../images/' + newPath;
+			// 				mui.toast('操作成功');
+			// 			} else {
+			// 				mui.toast('操作失败');
+			// 			}
+			// 		},
+			// 		error: function(err) {
+			// 			//nwaiting.close();
+			// 			console.log(err)
+			// 		}
+			// 	})
+			// }
+
+			var parentWebview = null;
+			mui('#opselects').on('tap', 'li a', function() {
+				//				console.log(this.innerText)
+				mui('#topPopover').popover('toggle');
+				if(parentWebview == null) {
+					parentWebview = plus.webview.currentWebview().opener();;
+				}
+				var s = this.innerText;
+				keepState = this.getAttribute('types');
+				//				nwaiting = plus.nativeUI.showWaiting();
+				getDataRw(keepState, 'dowm')
+
+				//				var listtype = this.getAttribute('types');
+				plus.storage.setItem("listtype", s);
+				parentWebview.evalJS("changepoptxt()");
+				//				evalJS('send('+targetId+')');
+				// wvA.evalJS("showAG('"+document.getElementById("pb").innerHTML+"')"); 
+			})
+		</script>
+	</body>
+
+</html>

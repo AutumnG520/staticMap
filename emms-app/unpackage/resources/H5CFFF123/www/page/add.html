@@ -1,0 +1,1022 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>添加页</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<style>
+			.mui-input-left {
+				float: left;
+				overflow: hidden;
+			}
+			
+			.list-view-log{
+				padding: 0 10px;
+			}
+			
+			.mui-content {
+				overflow: hidden;
+			}
+			
+			.mui-input-line {
+				overflow: hidden;
+				line-height: 45px;
+			}
+			
+			.mui-btn.mui-btn-primary {
+				margin-left: 15px;
+				vertical-align: middle;
+			}
+			
+			span {
+				font-size: 14px;
+			}
+			
+			input[type=text] {
+				margin: 0;
+			}
+			
+			.mui-left-color {
+				color: #AAA;
+			}
+			
+			.mui-add-save {
+				margin-top: 30px;
+				width: 60%;
+				background: #E03D3E;
+				line-height: 40px;
+				text-align: center;
+				color: #FFF;
+				transform: translate(30%, 0);
+			}
+			
+			.red {
+				color: red;
+			}
+			
+			input.service-reason,
+			input.service-service,
+			input.service-safetyMeasure,
+			input.service-hour {
+				margin: 0;
+				padding: 0;
+				/*line-height: 18px;*/
+				height: 24px;
+				background-color: transparent;
+				border: none;
+				border-radius: 0;
+				border-bottom: 1px solid #000;
+				width: 70%;
+			}
+			
+			input.service-hour {
+				text-align: center;
+				width: 30%;
+			}
+			
+			.switch-left {
+				/*float:left*/
+				display: inline-block;
+				margin-bottom: -8px;
+			}
+			
+			.service-halt {
+				margin-top: 3px;
+			}
+			
+			#popover {
+				position: fixed;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);
+			}
+			
+			.popover-title {
+				font-size: 20px;
+				padding: 10px 10px 0 10px;
+			}
+			
+			.mui-table-view {
+				padding: 0 10px;
+			}
+			
+			.a-pad {
+				padding: 10px 0;
+			}
+			
+			input.fault-value {
+				/*width: 70%;*/
+				transform: translate(0%, 20%);
+			}
+			
+			.mui-input-fault {
+				position: relative;
+				height: 60px;
+				margin: 0 15%;
+			}
+			
+			.wlh-time {
+				display: none;
+				background: #FFF;
+				height: 40px;
+				line-height: 40px;
+				transform: translate(0%, 20%);
+				border: 1px solid rgba(0, 0, 0, .2);
+			}
+			
+			#wlh-tap {
+				position: absolute;
+				right: 0;
+				top: 30%;
+				margin-right: 10px;
+				border-radius: 50%;
+			}
+			
+			.add-img{
+				/*margin-top:5px;*/
+				vertical-align: middle;
+				width:16px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">创建维修任务</h1>
+		</header>
+		<div class="mui-content list-view-log">
+			<div class="mui-input-line">
+				<div class="mui-input-left">
+					<!--<span class="mui-icon mui-icon-contact"></span>-->
+					<img class="add-img" src="../images/img_left_equip.png" alt="" />
+					<span>设备：</span>
+				</div>
+				<div class="mui-input-left mui-left-color">
+					<a class="wlh-equip" href="backTitle.html" data-title="双击选择设备" data-href="accordion.html" data-type="equip" style="color:#AAA;">
+						点击选择设备
+					</a>
+				</div>
+			</div>
+			<div class="mui-input-line">
+				<div class="mui-input-left">
+					<img class="add-img" src="../images/time.png" alt="" />
+					<!--<span class="mui-icon mui-icon-contact"></span>-->
+					<span>开始时间：</span>
+				</div>
+				<div class="mui-input-left  mui-left-color maintain-start-date">
+
+				</div>
+			</div>
+
+			
+			<div class="mui-input-line">
+				<div class="mui-input-left">
+					<!--<span class="mui-icon mui-icon-contact"></span>-->
+					<img class="add-img" src="../images/img_left_reporter1.png" alt="" />
+					<span>确认人：</span>
+				</div>
+				<div class="mui-input-left">
+					<!--<input type="text" class="" placeholder="请输入内容">-->
+					<a class="add-reporter a-pad" href="backTitle.html" data-title="点击右侧图标完成选择" data-href="../addressBook.html" data-type="reporter">
+						<button data-id="" type="button" class="serviceReporter mui-btn mui-btn-primary">添加</button></a>
+				</div>
+			</div>
+			<div class="mui-input-line">
+				<div class="mui-input-left">
+					<img class="add-img" src="../images/img_left_reporter1.png" alt="" />
+					<!--<span class="mui-icon mui-icon-contact"></span>-->
+					<span>执行人：</span>
+				</div>
+				<div class="mui-input-left">
+					<!--<input type="text" class="" placeholder="请输入内容">-->
+					<a class="add-actor  a-pad" href="backTitle.html" data-title="请点击选择" data-href="../addressBook.html" data-type="actor">
+						<div data-id="" type="button" class="service-actor mui-btn mui-btn-primary">添加</div>
+					</a>
+				</div>
+			</div>
+			
+			<div class="mui-input-line">
+				<div class="mui-input-left">
+					<!--<span class="mui-icon mui-icon-contact"></span>-->
+					<img class="add-img" src="../images/img_left_join.png" alt="" />
+					<span>参与人：</span>
+				</div>
+				<div class="mui-input-left">
+					<!--<input type="text" class="" placeholder="请输入内容">-->
+					<a class="add-participant a-pad" href="backTitle.html" data-title="点击右侧图标完成选择" data-href="../addressBook.html" data-type="participant">
+						<button data-id="" type="button" class="serviceParticipant mui-btn mui-btn-primary">添加</button></a>
+				</div>
+			</div>
+
+			<div class="mui-input-line">
+				<div class="mui-input-row mui-checkbox">
+					<input name="checkbox1" value="1" class="service-halt" type="checkbox" checked>
+					<label>此次故障导致停机</label>
+				</div>
+			</div>
+
+			<div class="mui-input-line">
+				<div class="mui-input-left">
+					<!--<span class="mui-icon mui-icon-contact"></span>-->
+					<img class="add-img" src="../images/img_left_can.png" alt="" />
+					<span>可能原因：</span>
+				</div>
+				<div class="mui-input-left">
+					<input type="text" class="service-reason" placeholder="请输入可能原因">
+				</div>
+			</div>
+			<div class="mui-input-line">
+				<div class="mui-input-left">
+					<!--<span class="mui-icon mui-icon-contact"></span>-->
+					<img class="add-img" src="../images/img_left_method.png" style="width:auto;padding:0 2px" alt="" />
+					<span>维修方法：</span>
+				</div>
+				<div class="mui-input-left">
+					<input type="text" class="service-service" placeholder="请输入维修方法">
+				</div>
+			</div>
+			<div class="mui-input-line">
+				<div class="mui-input-left">
+					<!--<span class="mui-icon mui-icon-contact"></span>-->
+					<img class="add-img" src="../images/img_left_method.png" style="width:auto;padding:0 2px" alt="" />
+					<span>安全措施：</span>
+				</div>
+				<div class="mui-input-left">
+					<input type="text" class="service-safetyMeasure" placeholder="请输入安全措施">
+				</div>
+			</div>
+			<div class="mui-input-line">
+				<div class="mui-input-left">
+					<!--<span class="mui-icon mui-icon-contact"></span>-->
+					<img class="add-img" src="../images/time1.png" alt="" />
+					<span>预计工时：</span>
+				</div>
+				<div class="mui-input-left" style="width:50%;">
+					<input type="number" class="service-hour" placeholder="" value="15">
+					<span class="unit-con">分钟</span>
+					<div class="mui-switch mui-switch-blue mui-switch-mini switch-left">
+						<div class="mui-switch-handle "></div>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="mui-input-line">
+				<div class="mui-input-left">
+					<!--<span class="mui-icon mui-icon-contact"></span>-->
+					<img class="add-img" src="../images/img_left_des.png" alt="" />
+					<span class="red">故障描述:</span>
+				</div>
+				<div>
+					<button type="button" class="service-fault mui-btn mui-btn-primary">常见故障</button>
+				</div>
+			</div>
+			<div class="">
+				<div class="mui-input-fault">
+					<input data-id="" type="text" class="fault-value" />
+					<div class="wlh-time"></div>
+					<span id="wlh-tap" class="mui-icon mui-icon-mic"></span>
+				</div>
+
+			</div>
+			<div class="mui-add-save">
+				保存
+			</div>
+		</div>
+		<!-- 弹出框 -->
+		<div id="popover" class="mui-popover">
+			<p class="popover-title">请选择</p>
+			<ul class="mui-table-view">
+
+			</ul>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/base64.min.js"></script>
+
+		<script type="text/javascript">
+			var wlhTap = document.querySelector('#wlh-tap'), //录音图标
+				audioPath = '',
+				ri = null, //定时器
+				audioIsSave = true,
+				r = null;
+			//			mui.init()
+			mui.init({
+				swipeBack: true, //启用右滑关闭功能
+				gestureConfig: {
+					longtap: true,
+					hold: true,
+					release: true
+				},
+				beforeback: function() {
+				　　//获得父页面的webview
+					var list = plus.webview.currentWebview().opener();
+				　　//触发父页面的自定义事件(refresh),从而进行刷新
+					mui.fire(list, 'refresh');
+					//返回true,继续页面关闭逻辑
+					return true;
+				}
+			});
+			//获取DOM对象
+			var dateStart = document.querySelector('.maintain-start-date'), //开始时间
+				serviceHalt = document.querySelector('.service-halt'), //停机
+				serviceSave = document.querySelector('.mui-add-save'), //保存
+				serviceFault = document.querySelector('.service-fault'), //故障
+				serviceReason = document.querySelector('.service-reason'), //原因
+				serviceService = document.querySelector('.service-service'), //方法
+				serviceSafetyMeasure = document.querySelector('.service-safetyMeasure')//安全措施
+				serviceHour = document.querySelector('.service-hour'), //工时
+				wlhEquip = document.querySelector('.wlh-equip'),
+				faultValue = document.querySelector('.fault-value');
+
+			//执行一些默认操作
+
+			//dcloud执行扩展操作
+			if(window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+
+			mui('body').on('tap', 'a', function() {
+				var href = this.getAttribute('href'),
+					type = this.getAttribute('data-type'),
+					title = this.getAttribute('data-title'),
+					url = this.getAttribute('data-href'),
+					equipId = document.querySelector('.wlh-equip').getAttribute('data-id');
+				if(!equipId && type != 'equip') {
+					mui.toast('请先选择设备');
+					return;
+				}
+
+				//非plus环境，直接走href跳转
+				if(!mui.os.plus) {
+					location.href = href;
+					return;
+				}
+
+				var id = this.getAttribute("data-wid");
+				if(!id) {
+					id = href;
+				}
+
+				if(href && ~href.indexOf('.html')) {
+					//打开窗口的相关参数
+					var options = {
+						styles: {
+							popGesture: "close"
+						},
+						extras: {}
+					};
+					//如下场景不适用下拉回弹：
+					//1、单webview下拉刷新；2、底部有fixed定位的div的页面
+
+					//图标页面需要启动硬件加速
+
+					//非原生导航，需要设置顶部状态栏占位
+					options.styles.statusbar = {
+						background: "#f7f7f7"
+					}
+
+					if(id && id == "viewgroup") { //强制启用截屏
+						options.extras.acceleration = "capture";
+					}
+//					this.getAttribute("data-wid");
+
+					//打开新窗口
+					mui.openWindow({
+						url: href,
+						id: id,
+						options,
+						styles: {
+							popGesture: "close"
+						},
+						extras: {
+							type: type,
+							title: title,
+							href: url,
+							equipId: equipId
+						}
+					});
+				}
+			});
+			// H5 plus事件处理
+			function plusReady() {
+
+				r = plus.audio.getRecorder();
+
+				localUrl = plus.storage.getItem('youranLocalUrl');
+				dateStart.innerHTML = nowDate();
+				var self = plus.webview.currentWebview();
+				var newType = self.type,
+					newId = self.cd,
+					newName = self.name;
+				if(newType === 'maintain') {
+					wlhEquip.innerHTML = newName;
+					wlhEquip.setAttribute('data-id', newId)
+				}
+
+				//开始时间
+				dateStart.addEventListener('tap', function() {
+					var _self = this;
+					pickDate(function(date) {
+						_self.innerHTML = date;
+					})
+				})
+
+				audioClick();
+
+				//常用故障
+				serviceFault.addEventListener('tap', function() {
+					getFault();
+				})
+
+				mui('.mui-table-view').on('tap', '.mui-table-view-cell', function() {
+					faultValue.value = this.querySelector('.mui-active').innerHTML;
+					wlhTap.style.display = 'none'
+					mui('#popover').popover('hide')
+
+				})
+
+				faultValue.addEventListener('input', function() {
+					faultValue.setAttribute('data-id', '');
+					if(faultValue.value) {
+						wlhTap.style.display = 'none';
+					} else {
+						wlhTap.style.display = 'block';
+					}
+				})
+
+				//单位切换
+				toggleUnit();
+
+				//保存
+				serviceSave.addEventListener('tap', function() {
+					var token=plus.storage.getItem("token")
+					var data = getData();
+					if(!data) {
+						return;
+					}
+
+					var p1 = {
+						jsonDoc:data,
+					};
+					console.log(JSON.stringify(p1))
+					mui.ajax(localUrl + '/api/repair/saveOrUpdate', {
+						data: p1,
+						dataType: 'json',
+						type: 'post',
+						contentType:'application/json',
+						beforeSend: function (XMLHttpRequest){
+							XMLHttpRequest.setRequestHeader("Authorization", token);
+						},
+						success: function(data) {
+							console.log(JSON.stringify(data));
+							if(data.code == 0) {
+								mui.toast('添加成功');
+							}
+							else{mui.toast('添加失败，但是没有错误')}
+							mui.back();
+						},
+						error: function(err) {
+							console.log("error here")
+							console.log(err)
+						}
+					})
+				})
+
+			}
+
+			// 选择日期
+			function pickDate(callback) {
+				plus.nativeUI.pickDate(function(e) {
+					var d = e.date,
+						date = d.getFullYear() + "-" + addZero(d.getMonth() + 1) + "-" + addZero(d.getDate());
+					pickTime(date, callback);
+				}, function(e) {
+					console.log("未选择日期：" + e.message);
+				}, {
+					title: "请选择日期："
+				});
+			}
+
+			//选择时间
+			function pickTime(date, callback) {
+				var t = new Date();
+				t.setHours(06, 00);
+				plus.nativeUI.pickTime(function(e) {
+					var d = e.date,
+						dateTime = date + " " + addZero(d.getHours()) + ":" + addZero(d.getMinutes());
+					callback(dateTime);
+				}, function(e) {
+					console.log("未选择时间：" + e.message);
+				}, {
+					time: t
+				});
+			}
+
+			//日期加零
+			function addZero(e) {
+				if(e > 9) {
+					return e;
+				} else if(e < 10) {
+					return '0' + e;
+				}
+			}
+
+			//当前时间
+			function nowDate() {
+				var date = new Date();
+				return date.getFullYear() + "-" + addZero(date.getMonth() + 1) + "-" + addZero(date.getDate()) + " " + addZero(date.getHours()) + ":" + addZero(date.getMinutes());
+			}
+
+			//获取数据
+			function getData() {
+				var serviceActor = document.querySelector('.service-actor'),
+					serviceReporter = document.querySelectorAll('.serviceReporter'),
+					serviceParticipant = document.querySelectorAll('.serviceParticipant'),
+					unitCon = document.querySelector('.unit-con'),
+					unitValue = serviceHour.value;
+
+				var reporterId = [],
+					executorId=[],
+					participantId = [];
+				serviceReporter.forEach(function(v, k) {
+					reporterId.push(Number(v.getAttribute('data-id')));
+				})
+				// serviceActor.forEach(function(v, k) {
+				// 	executorId.push(Number(v.getAttribute('data-id')));
+				// })
+				executorId.push(Number(serviceActor.getAttribute('data-id')))
+				serviceParticipant.forEach(function(v, k) {
+					participantId.push(Number(v.getAttribute('data-id')));
+				})
+
+				if(!wlhEquip.getAttribute('data-id')) {
+					mui.toast('请选择设备');
+					return false;
+				}
+				if(!serviceActor.getAttribute('data-id')) {
+					mui.toast('请选择执行人');
+					return false;
+				}
+				if(!reporterId) {
+					mui.toast('请选择报告人')
+					return false;
+				}
+
+				if(!unitValue) {
+					mui.toast('请输入工时')
+					return false;
+				}
+
+				if(!faultValue.value) {
+					mui.toast('请输入故障详情')
+					return false;
+				}
+				var endDt;
+				var workUnit;
+				if(unitCon.innerHTML == '小时') {
+					endDt = addMin(dateStart.innerHTML, unitValue, 'h')
+					workUnit=0
+				} else if(unitCon.innerHTML == '分钟') {
+					endDt = addMin(dateStart.innerHTML, unitValue, 'm')
+					workUnit=1
+				}
+				return {
+					// "seq": '',
+					"equips": [Number(wlhEquip.getAttribute('data-id'))],
+					"confirmer": reporterId,
+					"executor": executorId,
+					"participant": participantId,
+					"planedStartTime": dateStart.innerHTML,
+					"planedEndTime": endDt,
+					"executeCondition": isSelect(serviceHalt),
+					"faultDescription": faultValue.value,
+					// "atta_id": faultValue.getAttribute('data-id'),
+					"repairMethod": serviceService.value,
+					"reason": serviceReason.value,
+					"safetyMeasures":serviceSafetyMeasure.value,
+					"workHours":Number(unitValue),
+					"unit":workUnit
+					// "safetyMeasures": "sd"
+				}
+			}
+
+			//是否选中checkout
+			function isSelect(a) {
+				if(a.checked) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+
+			//获取常用故障
+			function getFault() {
+				var id = wlhEquip.getAttribute('data-id');
+				if(!id) {
+					mui.toast('请选择设备')
+					return;
+				}
+				var p = {
+					// "seq": "",
+					// id: id,
+					// type: ['3']
+				}
+				// console.log(p)
+				p = JSON.stringify(p);
+				var p1 = {
+					param: p,
+					id:id,
+					type: "3"
+				};
+				var token=plus.storage.getItem("token")
+				mui.ajax(localUrl + '/api/equipment/detail', {
+					data: p1,
+					dataType: 'json',
+					type: 'get',
+					beforeSend: function (XMLHttpRequest){
+						XMLHttpRequest.setRequestHeader("Authorization", token);
+					},
+					success: function(data) {
+						// console.log(isSelect(serviceHalt))
+						if(data.code ==='0') {
+							var str = ''
+							if(data.data.equipFaultDetail.length !== 0) {
+								data.data.equipFaultDetail.forEach(function(v, k) {
+									str += '<li class="mui-table-view-cell"><a href="#">' + v.jsonDoc.description + '</a></li>';
+									var self=plus.webview.currentWebview()
+								})
+								document.querySelector('.mui-table-view').innerHTML = str;
+								mui('#popover').popover('show');
+
+							} else {
+								mui.toast('该设备没有常用故障');
+							}
+
+						}
+					},
+					error: function(err) {
+						console.log(err)
+					}
+				})
+			}
+
+			//滑块切换单位
+			function toggleUnit() {
+				var switchDom = document.querySelector(".switch-left");
+				switchDom.addEventListener('tap', function() {
+					var isActive = this.classList.contains('mui-active'),
+						unitValue = serviceHour.value;
+					if(isActive) {
+						document.querySelector('.unit-con').innerHTML = '小时';
+						serviceHour.value = (unitValue / 60).toFixed(2);
+					} else {
+						document.querySelector('.unit-con').innerHTML = '分钟';
+						serviceHour.value = (unitValue * 60).toFixed(2);
+					}
+				})
+			}
+
+			//工时加
+			function addMin(dates, num, type) {
+				var arr = dates.split(/[- : \/]/);
+				dates1 = new Date(arr[0], arr[1], arr[2], arr[3], arr[4], '00');
+				var d = new Date(dates1);
+				var newNum;
+				if(type === 'h') {
+					newNum = num * 60 * 60 * 1000;
+				} else if(type === 'm') {
+					newNum = num * 60 * 1000;
+				}
+				var date = new Date(d.getTime() + newNum);
+				return date.getFullYear() + "-" + addZero(date.getMonth()) + "-" + addZero(date.getDate()) + " " + addZero(date.getHours()) + ":" + addZero(date.getMinutes());
+			}
+
+			//设备交互
+			function accordion(name, id) {
+				var dom = document.querySelector('.wlh-equip');
+				var data = name.split(',')
+				dom.innerHTML = data[0];
+				dom.setAttribute('data-id', data[1]);
+			}
+
+			//多选交互
+			function allPerson(data) {
+				var addReporter = document.querySelector('.add-reporter'),
+					addParticipant = document.querySelector('.add-participant'),
+					obj = JSON.parse(data),
+					str = '';
+				if(obj.type === 'reporter') { //确认人
+					for(i in obj) {
+						if(i !== 'type') {
+							str += '<div type="button" data-id="' + obj[i].id + '" class="serviceReporter mui-btn mui-btn-primary">' + obj[i].name + '</div>'
+						}
+					}
+					addReporter.innerHTML = str;
+				} else if(obj.type === 'participant') { // 参与人
+					for(i in obj) {
+						if(i !== 'type') {
+							str += '<div type="button" data-id="' + obj[i].id + '" class="serviceParticipant mui-btn mui-btn-primary">' + obj[i].name + '</div>'
+						}
+					}
+					addParticipant.innerHTML = str;
+				}
+			}
+
+			//单选交互
+			function actorPerson(data) {
+				var addActor = document.querySelector('.add-actor'),
+					data1 = data.split(',');
+				addActor.innerHTML = '<div type="button" data-id="' + data1[1] + '" class="service-actor mui-btn mui-btn-primary">' + data1[0] + '</div>'
+
+			}
+
+			function audioClick() {
+				//图标拖动
+				wlhTap.addEventListener('drag', function(e) {
+					this.style = 'transform:scale(3,3);background:red;'
+					document.querySelector('.fault-value').style.display = "none";
+					document.querySelector('.wlh-time').style.display = 'block';
+				
+					var dragX = e.detail.deltaX;
+					if(dragX < 0) {
+						this.style = 'right:' + -dragX + 'px;transform:scale(3,3);background:red;';
+					}
+
+				})
+				//拖动结束
+				wlhTap.addEventListener('dragend', function(e) {
+					document.querySelector('.fault-value').style.display = "inline-block";
+					document.querySelector('.wlh-time').style.display = 'none';
+
+					this.style = 'right:0;transform:scale(1,1);background:transparent;';
+					if(e.detail.deltaX < -10) {
+						audioIsSave = false;
+						stopRecord();
+					}
+				})
+
+				//按住事件
+				wlhTap.addEventListener('hold', function() {
+					plus.device.vibrate(500);
+					document.querySelector('.fault-value').style.display = "none";
+					document.querySelector('.wlh-time').style.display = 'block';
+					this.style = 'transform:scale(3,3);background:red;'
+					startRecord();
+					var t = 0;
+					document.querySelector('.wlh-time').innerHTML = timeToStr(t);
+					ri = setInterval(function() {
+						t++;
+						document.querySelector('.wlh-time').innerHTML = timeToStr(t);
+					}, 1000)
+
+				})
+
+				//按住结束
+				wlhTap.addEventListener('release', function() {
+					this.style = 'transform:scale(1,1);background: transparent;';
+					document.querySelector('.fault-value').style.display = "inline-block";
+					document.querySelector('.wlh-time').style.display = 'none';
+					clearInterval(ri);
+					ri = null;
+					document.querySelector('.wlh-time').innerHTML = '';
+					//		document.querySelector('.wlh-time').style = 'display:none';
+					audioIsSave = true;
+					stopRecord()
+
+				})
+			}
+
+			//开始录音
+			function startRecord() {
+				if(r == null) {
+					alert("Device not ready!");
+					return;
+				}
+				r.record({
+					filename: "_doc/",
+					format: 'wav'
+				}, function(a) {
+					if(audioIsSave) {
+						wt = plus.nativeUI.showWaiting();
+						audioFormat(a); //转换格式请求语音识别
+					} else {
+						alert("录音已取消");
+					}
+				}, function(e) {
+					alert("Audio record failed: " + e.message);
+				});
+			}
+
+			//停止录音
+			function stopRecord() {
+				r.stop();
+			}
+
+			//语音读取转换成BASE64格式
+			function audioFormat(path) {
+				plus.io.requestFileSystem(plus.io.PRIVATE_DOC, function(fs) {
+					var rootEntry = fs.root;
+					var reader = null;
+					var newPath = '';
+
+					if(plus.device.vendor == 'Apple') {
+						newPath = path.slice(5)
+					} else {
+						newPath = path
+					}
+
+					rootEntry.getFile(newPath, {}, function(entry) {
+
+							entry.file(function(file) {
+									reader = new plus.io.FileReader();
+									reader.onloadend = function(e) {
+										//							var audioAddress = plus.io.convertLocalFileSystemURL(path); //绝对路径							
+										//请求百度token
+										reqBaiduApi(e.target.result, file.size, path);
+									};
+									reader.readAsDataURL(file);
+								},
+								function(e) {
+									alert(e.message);
+								});
+						},
+						function(e) {
+							alert(JSON.stringify(e));
+						});
+				}, function(err) {
+					alert('读取错误：' + err);
+				});
+			}
+
+			/*
+			 * @param: data[string] BASE64格式文件
+			 * @parma: len[number]  文件大小，单位字节
+			 * @param: audioAddress[string] 文件绝对路径（上传使用）
+			 * */
+			//请求百度语音识别api获取token权限
+			function reqBaiduApi(data, len, audioAddress) {
+				mui.ajax('https://openapi.baidu.com/oauth/2.0/token?grant_type=client_credentials&client_id=KxyayZyXn4BPCssiQxIoojqWyH2qMxf3&client_secret=ixj2zOnoSMujCHw7GFWpdvtDX5LUhPQu', {
+					dataType: 'json',
+					type: 'get',
+					//headers:{'Content-Type':'application/json'},
+					success: function(res) {
+						reqToken(res.access_token, data, len, audioAddress)
+						// console.log(JSON.stringify(res))
+					},
+					error: function(err) {
+						wt.close();
+
+						console.log(err)
+					}
+				})
+			}
+
+			/*
+			 * @param: data[string] BASE64格式文件
+			 * @param: token[string] 获取到的token值
+			 * @param: len[number] 音频文件大小（字节）
+			 * @param: audioAddress[string] 文件绝对路径（上传使用）
+			 * */
+			//利用token上传文件base64格式获取翻译后的文字
+			function reqToken(token, data, len, audioAddress) {
+				var newSpeech = data.slice(data.indexOf(',') + 1);
+				var newIMEI = plus.device.uuid.split(',');
+				// console.log("即将进入获取文字")
+				mui.ajax('http://vop.baidu.com/server_api', {
+					data: {
+						"format": "wav",
+						"rate": 8000,
+						"channel": 1,
+						"token": token,
+						"cuid": newIMEI[0],
+						"lan": "zh",
+						"speech": newSpeech,
+						"len": len
+					},
+					contentType: "application/json",
+					dataType: 'json',
+					type: 'post',
+					success: function(res) {
+						// console.log(JSON.stringify(res))
+						wt.close();
+						if(res.err_no === 0) {
+							// createItem(audioAddress, 2, res.result, len); //上传文件	
+							// alert(res.result)
+							document.querySelector('.fault-value').value=res.result
+						} else if(res.err_no === 3309) {
+							mui.toast('语音时间过长');
+						} else if(res.err_no === 3301) {
+							mui.toast('音频质量过差');
+						}
+						else{mui.toast("未知错误")}
+					},
+					error: function(err) {
+						wt.close();
+						console.log(err)
+					}
+				})
+			}
+
+			//上传
+			function createItem(url, type, txt, size) {
+				if(type != 2) {
+					wt = plus.nativeUI.showWaiting();
+				}
+				var task = plus.uploader.createUpload(localUrl + '/api/upload/attachment', {
+						method: "POST"},
+					function(t, status) { //上传完成	
+						if(status == 200) {
+							var result = JSON.parse(t.responseText)
+							if(result.code == 0) {
+								// mui.toast('附件上传成功')
+								commitAudio(result.data.id, txt);
+								//addreport(result, type, txt)
+							} else {
+								mui.alert('请求错误！');
+								return;
+							}
+							wt.close(); //关闭等待提示按钮
+						} else {
+							alert("上传失败：" + status);
+							wt.close(); //关闭等待提示按钮
+						}
+					},
+					function(e) {
+						alert(e);
+					}
+				);
+				task.addFile(url, {key:"file"});
+				task.start();
+			}
+
+			//提交翻译后的语音
+			function commitAudio(id, txt) {
+				var p = {
+					attid: id,
+					text: txt.toString(),
+					errorcode: '0'
+				}
+				p = Base64.encode(JSON.stringify(p));
+				var p1 = {
+					// param: p
+					id: id,
+					text: txt.toString(),
+					errorCode: '0'
+				}
+				var token=plus.storage.getItem("token")
+				mui.ajax(localUrl + '/api/upload/translateText', {
+					data: p1,
+					dataType: 'json',
+					type: 'get',
+					beforeSend: function (XMLHttpRequest){
+						XMLHttpRequest.setRequestHeader("Authorization", token);
+					},
+					success: function(data) {
+						if(data.code == 0) {
+							var str = txt[0].substring(0, txt[0].length - 1);
+							faultValue.value = str;
+							faultValue.setAttribute('data-id', id);
+							wlhTap.style.display = 'none'
+							wt.close();
+						} else {
+							wt.close();
+							console.log(JSON.stringify(data));
+						}
+					},
+					error: function(err) {
+						wt.close();
+						console.log(err)
+					}
+				})
+			}
+
+			//转换成00：00：00字符串
+			function timeToStr(ts) {
+				if(isNaN(ts)) {
+					return "--:--:--";
+				}
+				var h = parseInt(ts / 3600);
+				var m = parseInt((ts % 3600) / 60);
+				var s = parseInt(ts % 60);
+				return(ultZeroize(h) + ":" + ultZeroize(m) + ":" + ultZeroize(s));
+			};
+
+			//加零
+			function ultZeroize(v, l) {
+				var z = "";
+				l = l || 2;
+				v = String(v);
+				for(var i = 0; i < l - v.length; i++) {
+					z += "0";
+				}
+				return z + v;
+			};
+		</script>
+	</body>
+
+</html>

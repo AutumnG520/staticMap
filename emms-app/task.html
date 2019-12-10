@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>任务</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="css/mui.min.css">
+		<link rel="stylesheet" href="css/util.css">
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			
+			.title {
+				padding: 20px 15px 10px;
+				color: #6d6d72;
+				font-size: 15px;
+				background-color: #fff;
+			}
+			
+			.rwbox img {
+				width: 55px;
+				margin-top: 20px;
+			}
+			
+			.rwbox p {
+				color: #FFFFFF;
+				font-size: 16px;
+			}
+			
+			.rwbox>a>div>div {
+				height: 130px;
+			}
+			
+			#topPopover {
+				position: fixed;
+				top: 16px;
+				right: 6px;
+			}
+			
+			#topPopover .mui-popover-arrow {
+				left: auto;
+				right: 6px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="list" class="mui-content pd10 rwbox " style="">
+			<a href="page/rwContent.html" type="2">
+				<div class="FL colW50-max t-c pd10">
+					<div class="" style="background-color:#87CEFA;">
+						<p>
+							<img src="images/lsxj.png" />
+						</p>
+						<p>保养</p>
+					</div>
+				</div>
+			</a>
+			<a href="page/rwContent.html" type="3">
+				<div class="FL colW50-max t-c pd10">
+					<div class="" style="background-color:#EE799F;">
+						<p>
+							<img src="images/jhxjs.png" />
+						</p>
+						<p>维修</p>
+					</div>
+				</div>
+			</a>
+			<a href="page/rwContent.html" type="1">
+				<div class="FL colW50-max t-c pd10">
+					<div class="" style="background-color:#009059;">
+						<p>
+							<img src="images/bbb.png" />
+						</p>
+						<p>巡检</p>
+					</div>
+				</div>
+			</a>
+			<a href="page/calContent.html">
+				<div class="FL colW50-max t-c pd10">
+					<div class="" style="background-color:#EEC900;">
+						<p>
+							<img src="images/rili.png" />
+						</p>
+						<p>日历</p>
+					</div>
+				</div>
+			</a>
+			<a href="page/care.html">
+				<div class="FL colW50-max t-c pd10">
+					<div class="" style="background-color:#EE82EE;">
+						<p>
+							<img src="images/gz.png" />
+						</p>
+						<p>关注</p>
+					</div>
+				</div>
+			</a>
+			<a href="spareList.html">
+				<div class="FL colW50-max t-c pd10" id="spareList">
+					<div class="" style="background-color:#83eb25;">
+						<p>
+							<img src="images/aaa.png" style="margin-bottom:5px;margin-top:30px" />
+						</p>
+						<p>备件</p>
+					</div>
+				</div>
+			</a>
+		</div>
+		<div id="topPopover" class="mui-popover" style="width: 150px;">
+			<div class="mui-popover-arrow"></div>
+			<div class="">
+				<div class="mui-scroll">
+					<ul id="opselects-concat" class="mui-table-view">
+						<li class="mui-table-view-cell">
+							<a href="page/scan2d.html" types='task'>扫描任务</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a href="page/scan2d.html" types='maintain'>扫描维修</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/commonAction.js"></script>
+		<script>
+			mui.init({
+				swipeBack: true,
+			});
+			mui.plusReady(function() {
+			
+				mui('#opselects-concat').on('tap', 'a', function() {
+					mui('#topPopover').popover('toggle');
+					var types = this.getAttribute('types');
+					var href = this.getAttribute('href');
+					actionMuiCommon.towebview(href,{type:types})
+				});
+			
+//				mui('#spareList').on('tap',function(){
+////					var view = plus.webview.getWebviewById('index'),
+////						aaa = 1;
+////					view.evalJS("jump('" + aaa + "')")
+//				})
+			
+				mui('#list').on('tap', 'a', function() {
+					var href = this.getAttribute('href');
+
+					if(href == 'spareList.html'){
+//						plus.webview.show(href);
+						 var index = plus.webview.getWebviewById('index');
+						 var aaa = 0;
+						index.evalJS("jump('" + aaa + "')");
+						return false
+					}
+
+					//非plus环境，直接走href跳转
+					if(!mui.os.plus) {
+						location.href = href;
+						return;
+					}
+
+					var id = this.getAttribute("data-wid");
+					if(!id) {
+						id = href;
+					}
+					var type = this.getAttribute('type')
+					if(href && ~href.indexOf('.html')) {
+						//打开窗口的相关参数
+						var options = {
+							styles: {
+								popGesture: "close"
+							},
+							extras: {
+								type: type
+							}
+						};
+						//如下场景不适用下拉回弹：
+						//1、单webview下拉刷新；2、底部有fixed定位的div的页面
+
+						//图标页面需要启动硬件加速
+
+						//非原生导航，需要设置顶部状态栏占位
+						options.styles.statusbar = {
+							background: "#f7f7f7"
+						}
+
+						if(id && id == "viewgroup") { //强制启用截屏
+							options.extras.acceleration = "capture";
+						}
+						//打开新窗口
+						mui.openWindow(href, id, options);
+					}
+				});
+			});
+
+			function shownpop() {
+				mui('#topPopover').popover('toggle');
+			}
+		</script>
+	</body>
+
+</html>

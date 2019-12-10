@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta http-equiv="Access-Control-Allow-Origin" content="">
+		<meta http-equiv="content-security-policy">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/util.css">
+		<style>
+			.mui-card-header img {
+				width: 21px;
+				/*margin-top:2px ;*/
+			}
+			
+			a {
+				color: #333333;
+			}
+			
+			.mui-plus .plus {
+				display: inline;
+			}
+			
+			.plus {
+				display: none;
+			}
+			
+			#topPopover {
+				position: fixed;
+				top: 16px;
+				right: 6px;
+			}
+			
+			#topPopover .mui-popover-arrow {
+				left: auto;
+				right: 6px;
+			}
+			/*p {
+				text-indent: 22px;
+			}*/
+			
+			span.mui-icon {
+				font-size: 14px;
+				color: #007aff;
+				margin-left: -15px;
+				padding-right: 10px;
+			}
+			
+			.mui-popover {
+				height: 350px;
+			}
+			
+			.wlh-radius {
+				border-radius: 10px;
+			}
+			
+			.wlh-care {
+				margin-top: 5px;
+			}
+			
+			.wlh-test {
+				height: 0px;
+			}
+			
+			.wlh-test1 {
+				height: 25px;
+			}
+			
+			.wlh-algin {
+				text-align: center;
+				margin-top: 50px;
+				color: #333;
+			}
+			
+			.wlh-ts {
+				margin-top: 40px;
+				text-align: center;
+			}
+			
+			.mui-card-content-inner {
+				padding-left: 3px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--<div class="ptfix popheader" style="top: 0px;right: 10px;z-index: 1000;">
+			<a id="menu" class="mui-action-menu mui-icon mui-icon-bars mui-pull-right" style="font-size: 18px;" href="#topPopover">我派发的</a>
+		</div>-->
+		<!--下拉刷新容器-->
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+			<div id="list" class="mui-scroll">
+				<!--数据列表-->
+
+			</div>
+		</div>
+		<div class="ptfix" style="bottom: 20px;right: 10px;z-index: 1000;">
+
+		</div>
+		<div id="topPopover" class="mui-popover">
+			<!-- <div class="mui-popover-arrow"></div> -->
+			<div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<ul id="opselects" class="mui-table-view">
+						<li class="mui-table-view-cell">
+							<a href="#" types='-1'>全部任务</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a href="#" types='0'>分配我的</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a href="#" types='1'>我派发的</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a href="#" types='2'>报告我的</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a href="#" types='3'>我参与的</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a href="#" types='4'>我关注的</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/template-web.js"></script>
+		<script src="../js/base64.min.js"></script>
+		
+					<!-- <a href="listDetail.html" key='{{ $value.taskId }}' types='{{ $value.taskType.code }}' pkey='{{ $value.projid }}' std="{{ $value.status.code }}">
+			<div class="mui-card wlh-radius" style="height: 140px;">
+				{{if $value.status.code == 0}}
+				<div class="FL colW10 ptrel" style="height: 100%;background-color: #90EE90;">
+					<p class=" wlh-algin">正<br>常</p>
+					{{else if $value.status.code == 1}}
+					<div class="FL colW10 ptrel" style="height: 100%;background-color: #D2691E;">
+						<p class=" wlh-algin">预<br>警</p>
+						{{else if $value.status.code == 2}}
+						<div class="FL colW10 ptrel" style="height: 100%;background-color: #CDAD00;">
+							<p class=" wlh-algin">逾<br>期</p>
+							{{/if}}
+		
+						</div> -->
+		
+		
+		
+		<script id="test" type="text/html">
+			{{each $data}}
+					<a href="listDetail.html" key='{{ $value.taskId }}' types='{{ $value.taskType.code }}' pkey='{{ $value.projid }}'>
+						<div class="mui-card wlh-radius" style="height: 140px;">
+							{{if $value.status}}
+							{{if $value.status.code == 0}}
+							<div class="FL colW10 ptrel" style="height: 100%;background-color: #90EE90;">
+								<p class=" wlh-algin">正<br>常</p>
+								{{else if $value.status.code == 1}}
+								<div class="FL colW10 ptrel" style="height: 100%;background-color: #D2691E;">
+									<p class=" wlh-algin">预<br>警</p>
+									{{else if $value.status.code == 2}}
+									<div class="FL colW10 ptrel" style="height: 100%;background-color: #CDAD00;">
+										<p class=" wlh-algin">逾<br>期</p>
+										{{/if}}
+						{{/if}}
+						</div>
+							<div class="FL colW90">
+								<div class="mui-card-header wlh-test t-c">
+									<p  test="1" key="{{ $value.equips }}" class="FL mg0 colW50 t-l textApostrophe"> 
+										<!-- {{each $value.equips}} {{ $value.equipName }} {{/each}} -->
+										{{$value.equips[0].equipName}}
+									</p>
+									<p class="FR mg0 colW25 F12">
+									<!-- {{each $value.equips}} {{ $value.equipId }} {{/each}} -->
+									{{$value.equips[0].equipId}}
+									 </p>
+									<p class="FR mg0 colW20 F12 bdCir5 bdccc">
+										{{$value.progress.name}}
+										</p>
+<!-- 									<p class="FR mg0 colW10 pd-lr10 wlh-care">
+										{{if $value.care == 0}}
+										<img src="../images/start.png" data-id="{{$value.taskid}}" /> {{else}}
+										<img src="../images/start-1.png" data-id="{{$value.taskid}}" /> {{/if}}
+									</p> -->
+								</div>
+								<div class="mui-card-content">
+									<div class="mui-card-content-inner">
+										<div class="FL colW100 wlh-test1">
+											<p class="FL colW5 "><img src="../images/user.png" style="margin-top:3px" /></p>
+											<p class="FL colW95 pd-l5">
+												{{each $value.actor}} {{$value}} {{/each}}
+											</p>
+										</div>
+										<div class="FL colW100 wlh-test1">
+											<p class="FL colW5 "><img src="../images/home-2.png" style="margin-top:3px" /></p>
+											<p class="FL colW95 pd-l5">
+											<!-- {{each $value.equips}} {{ $value.position}} {{/each}} -->
+											{{ $value.equips[0].position?$value.equips[0].position:'未知' }}
+											</p>
+										</div>
+										<div class="FL colW100 wlh-test1">
+											<p class="FL colW5 "><img src="../images/time.png" style="margin-top:3px" /></p>
+											<p class="FL colW95 pd-l5">{{$value.endDate?$value.endDate:''}}</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+			</a>
+			{{/each}}
+		</script>
+		<script>
+			var keepState = '';
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						callback: pulldownRefresh
+					},
+					up: {
+						contentrefresh: '正在加载...',
+						callback: pullupRefresh
+					}
+				}
+			});
+			var page = 1;
+			/**
+			 * 下拉刷新具体业务实现
+			 */
+			function pulldownRefresh() {
+				setTimeout(function() {
+					page = 1;
+					var index = keepState ? keepState : -1;
+					getDataRw(index, 'dowm')
+								}, 100);
+			}
+			var count = 0;
+			/**
+			 * 上拉加载具体业务实现
+			 */
+			function pullupRefresh() {
+				setTimeout(function() {
+					var index = keepState ? keepState : -1;
+					page=page+1
+					getDataRw(index, 'up')
+				// console.log('page'+page)
+				}, 1500);
+			}
+			if(window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener('plusready', plusReady, false);
+			}
+
+			function plusReady() {
+				window.addEventListener('refresh1', function(e){//执行刷新
+				    location.reload();
+				});
+				localUrl = plus.storage.getItem('youranLocalUrl');
+				var token=plus.storage.getItem("token")
+				//nwaiting = plus.nativeUI.showWaiting();
+				//判断是否可以添加
+				// console.log(1)
+				var addType = getType();
+				if(addType==3) {
+					var addDom = document.querySelector('.ptfix')
+					addDom.innerHTML = '<img class="add" src="../images/add.png" />';
+				
+				var p1 = {
+					taskType:addType,
+					}
+				mui.ajax(localUrl + '/api/task/canGenerate', {
+					data: p1,
+					dataType: 'json',
+					type: 'get',
+					beforeSend: function (XMLHttpRequest){
+						XMLHttpRequest.setRequestHeader("Authorization", token);
+					},
+					success: function(data) {
+						 // console.log(data)
+						if(data.code ==='0') {
+								addDom.addEventListener('tap', function(){
+									mui.openWindow('add.html')
+								})
+						}
+						 else{mui.toast("当前已有任务生成计划在等待执行，请勿重复生成")}
+					},
+					error: function(err) {
+						console.log(err)
+					}
+				})
+				}
+				
+			} //获取传参type
+			function getType() {
+				var self = plus.webview.currentWebview();
+				var type = self.type;
+				return type;
+			}
+
+			function getCd() {
+				var self = plus.webview.currentWebview();
+				var result = self.result;
+				return result;
+			}
+
+			mui.plusReady(function() {
+				pulldownRefresh();
+				mui('body').on('tap', 'a', function() {
+					var href = this.getAttribute('href');
+					//非plus环境，直接走href跳转
+					if(!mui.os.plus) {
+						location.href = href;
+						return;
+					}
+					var id = this.getAttribute("data-wid");
+					if(!id) {
+						id = href;
+					}
+					if(href && ~href.indexOf('.html')) {
+
+						//打开窗口的相关参数
+
+						//如下场景不适用下拉回弹：
+						//1、单webview下拉刷新；2、底部有fixed定位的div的页面
+
+						//图标页面需要启动硬件加速
+
+						var key = this.getAttribute("key");
+						//						console.log(key)
+
+						var pkey = this.getAttribute("pkey");
+						var type = this.getAttribute("types");
+						var std = this.getAttribute("std");
+						this.getAttribute("data-wid");
+
+						//						console.log(href)
+						var options = {
+							styles: {
+								popGesture: "close"
+							},
+							styles: {
+								popGesture: "close"
+							},
+							show: {
+								aniShow: 'pop-in'
+							},
+							waiting: {
+								autoShow: true
+							},
+							extras: {
+								key: key,
+								pkey: pkey,
+								type: type,
+								std: std
+							}
+						};
+						//非原生导航，需要设置顶部状态栏占位
+						options.styles.statusbar = {
+							background: "#f7f7f7"
+						}
+
+						if(id && id == "viewgroup") { //强制启用截屏
+							options.extras.acceleration = "capture";
+						}
+						//打开新窗口
+						mui.openWindow(href, id, options);
+					}
+				});
+
+				mui('body').on('tap', '.equipHref',function() {
+					var key = this.getAttribute("key"),
+						href = this.getAttribute("href");
+						
+					href = localUrl +href +key;
+					var id = href;
+					var options = {
+							styles: {
+								popGesture: "close"
+							},
+							styles: {
+								popGesture: "close"
+							},
+							show: {
+								aniShow: 'pop-in'
+							},
+							waiting: {
+								autoShow: true
+							},
+							extras: {
+								href:href,
+								title:'设备详情',
+								type:'1',
+								equipId:'1'
+							}
+						};
+						//'backTitle.html'
+					mui.openWindow('backTitle.html', id, options);
+					return false;
+				})
+
+			});
+
+			//pulldownRefresh()
+
+			function getDataRw(index, action) {
+				var today = getNowFormatDate();
+				var token =plus.storage.getItem("token")
+				var type1 = getType();
+				if(Number(index) === -1) {
+					var api='/api/task/all'
+					var p1 = {
+						taskType:Number(type1),
+						startDate: '2018-09-19 00:00:00',
+						endDate: '2019-09-29 12:00:00',
+						sortCol:"progress",
+						sortOrder:"asc",
+						pageNo:page,
+						pageSize:20,
+
+					}
+				} else {
+					if(index===4){
+						var api='/api/task/me'
+						var p1 = {
+							me:index,
+							taskType:Number(type1),
+							status:-1,
+							progress:-1,
+							isChild:0,
+							users:[''],
+							query:'',
+							startDate:'2018-09-19 00:00:00',
+							endDate: '2019-09-29 12:00:00',
+							sortCol:"progress",
+							sortOrder:"asc",
+							pageNo:page,
+							pageSize:20
+					}}
+					else{
+					var api='/api/task/me'
+					var p1 = {
+						me:index,
+						taskType:Number(type1),
+						status:-1,
+						progress:-1,
+						equipIds:[''],
+						isChild:0,
+						users:[''],
+						query:'',
+						startDate:'2018-09-19 00:00:00',
+						endDate: '2019-09-29 12:00:00',
+						sortCol:"progress",
+						sortOrder:"asc",
+						pageNo:page,
+						pageSize:20
+					}
+					}
+					// console.log(p1)
+				}
+				var nwaiting = plus.nativeUI.showWaiting();
+				mui.ajax(localUrl + api, {
+					data: p1,
+					dataType: 'json',
+					type: 'get',
+					beforeSend: function (XMLHttpRequest){
+						XMLHttpRequest.setRequestHeader("Authorization", token);
+					},
+					success: function(data) {
+						// console.log(data)
+						nwaiting.close();
+						//自定义函数
+						if (data.code==='0'){
+						data1=data.data.rows
+						// console.log(data1)
+						var html = template("test", data1);
+						if(action == 'dowm') {
+							if(data.data.rows.length == 0) {
+								document.getElementById('list').innerHTML = '<p class="wlh-ts">暂时没有数据</p>'
+							} else {
+								document.getElementById('list').innerHTML = html;
+							}
+							mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+						} else {
+							mui('#pullrefresh').pullRefresh().endPullupToRefresh();
+							if(data.data.rows.length == 0) {
+								} 
+							document.getElementById('list').innerHTML = document.getElementById('list').innerHTML + html
+							//参数为true代表没有更多数据了。
+						}
+						}else {mui.toast('数据加载失败');}
+					},
+					error: function(err) {
+						nwaiting.close();
+						console.log(err)
+					}
+				})
+			}
+
+			function getNowFormatDate() {
+				var date = new Date();
+				var seperator1 = "-";
+				var year = date.getFullYear();
+				var month = date.getMonth() + 1;
+				var strDate = date.getDate();
+				if(month >= 1 && month <= 9) {
+					month = "0" + month;
+				}
+				if(strDate >= 0 && strDate <= 9) {
+					strDate = "0" + strDate;
+				}
+				var currentdate = year + seperator1 + month + seperator1 + strDate;
+				return currentdate;
+			}
+		</script>
+		<script>
+			//			mui('.mui-scroll-wrapper').scroll();
+
+			function shownpop() {
+				mui('#topPopover').popover('toggle');
+			}
+
+			mui('body').on('shown', '.mui-popover', function(e) {
+				//				console.log('shown', e.detail.id);//detail为当前popover元素
+			});
+
+			mui('body').on('hidden', '.mui-popover', function(e) {
+				//				console.log('hidden', e.detail.id);//detail为当前popover元素
+			});
+
+			//关注操作
+			// mui('body').on('tap', '.wlh-care img', function(e) {
+			// 	var index = this.src.indexOf('images/') + 7,
+			// 		src = this.src.slice(index),
+			// 		_self = this,
+			// 		id = this.getAttribute('data-id'),
+			// 		care = '';
+			// 	if(src == 'start.png') {
+			// 		care = 1;
+			// 	} else {
+			// 		care = 0;
+			// 	}
+			// 	careAjax(_self, care, id);
+			// 	e.stopPropagation();
+			// })
+
+			//关注ajax请求
+// 			function careAjax(dom, index, id) {
+// 				var p = {
+// 					seq: '',
+// 					taskid: id,
+// 					care: index
+// 				}
+// 				p = JSON.stringify(p)
+// 				p = Base64.encode(p)
+// 				var p1 = {
+// 					param: p
+// 				}
+// 				//				var nwaiting = plus.nativeUI.showWaiting();
+// 				mui.ajax(localUrl + '/maintenance?', {
+// 					data: p1,
+// 					dataType: 'json',
+// 					type: 'get',
+// 					success: function(data) {
+// 						//						nwaiting.close();
+// 
+// 						//						dom.src = ''
+// 						//						console.log(JSON.stringify(data));
+// 						if(data.eid === 0) {
+// 							var newPath = '';
+// 							if(index == 1) {
+// 								newPath = 'start-1.png';
+// 							} else if(index == 0) {
+// 								newPath = 'start.png';
+// 							}
+// 							dom.src = '../images/' + newPath;
+// 							mui.toast('操作成功');
+// 						} else {
+// 							mui.toast('操作失败');
+// 						}
+// 					},
+// 					error: function(err) {
+// 						//						nwaiting.close();
+// 
+// 						console.log(err)
+// 					}
+// 				}) 
+// 			}
+
+			var parentWebview = null;
+			mui('#opselects').on('tap', 'li a', function() {
+								// console.log(this.innerText)
+				mui('#topPopover').popover('toggle');
+				if(parentWebview == null) {
+					parentWebview = plus.webview.currentWebview().opener();
+				}
+				var s = this.innerText;
+				keepState = this.getAttribute('types');
+				//				nwaiting = plus.nativeUI.showWaiting();
+				page=1
+				getDataRw(keepState, 'dowm')
+				//				var listtype = this.getAttribute('types');
+				plus.storage.setItem("listtype", s);
+				parentWebview.evalJS("changepoptxt()");
+				//				evalJS('send('+targetId+')');
+				// wvA.evalJS("showAG('"+document.getElementById("pb").innerHTML+"')"); 
+			})
+
+		</script>
+	</body>
+
+</html>

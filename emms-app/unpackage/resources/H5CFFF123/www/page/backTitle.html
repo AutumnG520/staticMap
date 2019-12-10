@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>回退标题</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/util.css">
+		<style>
+			.wlh-title {
+				text-align: left;
+				margin-left: 20px;
+				line-height: 47px;
+			}
+			
+			.wlh-check {
+				float: right;
+				height: 48px;
+				display: none;
+			}
+			
+			.wlh-check img {
+				width: 20px;
+				height: 20px;
+				display: inline-block;
+				margin-top: 8px;
+				margin-right: 28px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a id="back" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left "></a>
+			<h1 id="title" class="mui-title wlh-title"></h1>
+			<div class="wlh-check"><img src="../images/dui.jpg" /></div>
+		</header>
+
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script type="text/javascript">
+		if(window.plus) {
+			plusReady();
+		} else {
+			document.addEventListener('plusready', plusReady, {passive:false});
+		}
+
+		function plusReady() {
+			var self = plus.webview.currentWebview(),
+				type = self.type,
+				url = self.href,
+				title = self.title,
+				equipId = self.equipId;
+			if(type == 'participant' || type == 'reporter') {
+				document.querySelector('.wlh-check').style.display = 'block';
+			}
+			document.querySelector('.wlh-title').innerHTML = title;
+			// console.log(url)
+			//启用双击监听
+			mui.init({
+				gestureConfig: {
+					doubletap: true
+				},
+				subpages: [{
+					url:url,
+					id: equipId,
+					styles: {
+						top: '50px',
+						bottom: '0px',
+					},
+
+					extras: {
+						type: type,
+						equipId: equipId
+					}
+				}]
+			});
+		}
+
+		var arr = {};
+		document.querySelector('.wlh-check').addEventListener('tap', function() {
+			var obj = JSON.stringify(arr);
+//			var addHtml = plus.webview.getWebviewById('add.html');
+			var addHtml = plus.webview.currentWebview().opener();
+			addHtml.evalJS("allPerson('" + obj + "')");
+			mui.back();
+		}, {passive:false})
+
+		function back(data) {
+			var data = data.split(',');
+			arr.type = data[4];
+			var obj = {
+				name: data[0],
+				id: data[1]
+			}
+			if(data[2] === 'true') {
+				arr[data[3]] = obj;
+			} else {
+				delete arr[data[3]];
+			}
+		}
+		
+		function actorPerson(data){
+			var addHtml = plus.webview.currentWebview().opener();
+			addHtml.evalJS("actorPerson('" + data + "')");
+		}
+	</script>
+
+</html>

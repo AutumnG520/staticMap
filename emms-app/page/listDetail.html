@@ -1,0 +1,2056 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/util.css">
+		<!--App自定义的css-->
+		<!-- <link rel="stylesheet" type="text/css" href="../css/app.css" /> -->
+		<style>
+			h5 {
+				margin: 5px 7px;
+			}
+			
+			.mui-card-header img {
+				width: 21px;
+				/*margin-top:2px ;*/
+			}
+			
+			#popover {
+				position: fixed;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);
+			}
+			#popover1 {
+				position: fixed;
+				/* left: 50%; */
+				top: 50%
+				transform: translate(-50%, -50%);
+			}
+			.popover-title {
+				font-size: 20px;
+				padding: 10px 10px 0 10px;
+			}
+			
+			#popover .mui-table-view {
+				padding: 0 10px;
+			}
+			
+			.mui-table-view img {
+				margin-top: 2px;
+			}
+			
+			.title {
+				margin: 20px 15px 7px;
+				/*color: #6d6d72;*/
+				/*font-size: 15px;*/
+			}
+			
+			.worklog img {
+				width: 40px;
+				margin: 10px 0px;
+			}
+			
+			.mui-preview-image.mui-fullscreen {
+				position: fixed;
+				z-index: 20;
+				background-color: #000;
+			}
+			
+			.mui-preview-header,
+			.mui-preview-footer {
+				position: absolute;
+				width: 100%;
+				left: 0;
+				z-index: 10;
+			}
+			
+			.mui-preview-header {
+				height: 44px;
+				top: 0;
+			}
+			
+			.list-detail-img {
+				width: 14px;
+				/*vertical-align: middle;*/
+				/*margin-top:8px*/
+				/*height: 14px;*/
+			}
+			
+			.list-detail-img.wang {
+				width: 10px;
+				margin: 0 2px;
+			}
+			
+			.mui-preview-footer {
+				height: 50px;
+				bottom: 0px;
+			}
+			
+			.mui-preview-header .mui-preview-indicator {
+				display: block;
+				line-height: 25px;
+				color: #fff;
+				text-align: center;
+				/*margin: 15px auto 4;*/
+				/*width: 70px;*/
+				background-color: rgba(0, 0, 0, 0.4);
+				border-radius: 12px;
+				font-size: 16px;
+			}
+			
+			.mui-preview-image {
+				display: none;
+				-webkit-animation-duration: 0.5s;
+				animation-duration: 0.5s;
+				-webkit-animation-fill-mode: both;
+				animation-fill-mode: both;
+			}
+			
+			.mui-preview-image.mui-preview-in {
+				-webkit-animation-name: fadeIn;
+				animation-name: fadeIn;
+			}
+			
+			.mui-preview-image.mui-preview-out {
+				background: none;
+				-webkit-animation-name: fadeOut;
+				animation-name: fadeOut;
+			}
+			
+			.mui-preview-image.mui-preview-out .mui-preview-header,
+			.mui-preview-image.mui-preview-out .mui-preview-footer {
+				display: none;
+			}
+			
+			.mui-zoom-scroller {
+				position: absolute;
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-box-align: center;
+				-webkit-align-items: center;
+				align-items: center;
+				-webkit-box-pack: center;
+				-webkit-justify-content: center;
+				justify-content: center;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				-webkit-backface-visibility: hidden;
+			}
+			
+			.mui-zoom {
+				-webkit-transform-style: preserve-3d;
+				transform-style: preserve-3d;
+			}
+			
+			.mui-slider .mui-slider-group .mui-slider-item img {
+				width: auto;
+				height: auto;
+				max-width: 100%;
+				max-height: 100%;
+			}
+			
+			.mui-android-4-1 .mui-slider .mui-slider-group .mui-slider-item img {
+				width: 100%;
+			}
+			
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-slider-group .mui-slider-item {
+				display: inline-table;
+			}
+			
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-zoom-scroller img {
+				display: table-cell;
+				vertical-align: middle;
+			}
+			
+			.mui-preview-loading {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				display: none;
+			}
+			
+			.mui-preview-loading.mui-active {
+				display: block;
+			}
+			
+			.mui-preview-loading .mui-spinner-white {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-left: -25px;
+				margin-top: -25px;
+				height: 50px;
+				width: 50px;
+			}
+			
+			.mui-preview-image img.mui-transitioning {
+				-webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+				transition: transform 0.5s ease, opacity 0.5s ease;
+			}
+			
+			@-webkit-keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			@keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			@-webkit-keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			
+			@keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			
+			p img {
+				max-width: 100%;
+				height: auto;
+			}
+			
+			.inputcontnet img {
+				width: 25px;
+				margin: 5px;
+				margin-top: 13px;
+			}
+			
+			.inputcontnet input {
+				height: 35px;
+				margin-top: 5px;
+				width: 88%;
+				margin-left: 5px;
+			}
+			
+			.inputcontnet{
+				position: absolute;
+				top:0;width: 100%;height: 45px;background-color: #FFF;
+			}
+			
+			.wlh-wraper {
+				position: relative;
+				bottom: 0;
+				left: 0;
+				padding: 0 10%;
+				width: 100%;
+				height: 40px;
+			}
+			
+			.wlh-tap {
+				position: relative;
+				/*margin: 40px 0 0 40px;*/
+				/*padding: 0 40px;*/
+				/*left:10%;*/
+				width: 80%;
+				height: 40px;
+				/*text-align: center;*/
+				line-height: 40px;
+				transition: all all 1s ease;
+			}
+			
+			.wlh-tap .mui-icon {
+				float: right;
+				margin-top: 11px;
+				transition: transform .5s ease;
+				border-radius: 50%;
+				line-height: 24px;
+				/*vertical-align: middle;*/
+			}
+			
+			.wlh-time {
+				width: 100%;
+				float: left;
+				display: inline-block;
+				position: absolute;
+				left: 8px;
+				top: 3px;
+				z-index: 1;
+			}
+			
+			#wlh-tap {
+				position: absolute;
+				right: 0;
+				top: 0;
+			}
+			
+			ul,
+			li {
+				list-style: none;
+			}
+			
+			#processbox {
+				top: 50px;
+				width: 80px;
+				background-color: #FFFFFF;
+			}
+			
+			#headers-card {
+				border-radius: 5px;
+			}
+			
+			#content-card {
+				border-radius: 5px;
+			}
+			
+			.mui-card {
+				border-radius: 5px;
+			}
+			
+			footer {
+				position: fixed;
+				width: 100%;
+				/*height: 45px;*/
+				min-height: 45px;
+				/*border-top: solid 1px #bbb;*/
+				left: 0px;
+				bottom: 0px;
+				overflow: hidden;
+				/*padding: 0px 50px;*/
+				background-color: #FFF;
+			}
+			
+			.mui-content {
+				height: 100%;
+				padding: 0px 0px 55px 0px;
+				overflow: scroll;
+				background-color: #eaeaea;
+				/*height: 100%;*/
+				/*overflow: auto;*/
+				-webkit-overflow-scrolling: touch;
+			}
+			html,body {
+				height: 100%;
+				margin: 0px;
+				padding: 0px;
+				overflow: hidden;
+				-webkit-touch-callout: none;
+				-webkit-user-select: none;
+			}
+		</style>
+	</head>
+
+	<body contextmenu="return false;">
+		<header class="mui-bar mui-bar-nav">
+			<a id=back class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="title" class="mui-title"></h1>
+			<!-- <p id="son-list" class="mui-pull-right" style="width: 30px;margin-top: 6px;display: none;"> <img src="../images/son.png" /> </p> -->
+		</header>
+		<div class="mui-content list-view-log">
+			<div id='headers-card' class="mui-card" style="height: 180px;">
+
+			</div>
+			<div id='content-card' class="mui-card" style="margin-bottom: 5px;">
+
+			</div>
+			<div class="title F18">
+				工作日志
+			</div>
+			<div id="list-card-con">
+
+			</div>
+		</div>
+		<!--<div class="DivH50"></div>-->
+
+		<!-- 弹出框 -->
+		<div id="popover" class="mui-popover">
+			<p class="popover-title">请选择</p>
+			<ul class="mui-table-view">
+				<li class="photo-album mui-table-view-cell">
+					<a href="#">相册</a>
+				</li>
+				<li class="spare-part mui-table-view-cell">
+					<a href="#">备件</a>
+				</li>
+			</ul>
+		</div>
+		<footer>
+			<div id="inputcontnet_" class="inputcontnet" >
+				<div class="FL colW10" onclick="getImage()"><img src="../images/camera.png" /></div>
+				<div class="wlh-tap FL colW70max ptrel">
+					<input id="inputtext" type="text" class="disNone" placeholder="请输入工作日志" />
+					<div class="wlh-time"></div>
+					<div id="wlh-tap" class="mui-icon mui-icon-mic"></div>
+					<!--<div id="wlh-tap" class="FL" style="right: -7px;top: -1px;">
+					<img src="../images/yy.png" />
+				</div>-->
+					<div id="sendmsg" class="FL bdccc" style="position: absolute;z-index:1000; top: 5px;height:35px;line-height:38px; right: -25px;padding:0 5px; border-radius:4px; display: none;background: #FFF;">
+						<!--<img style="width: 40px;" src="../images/send.png" />-->发送</div>
+				</div>
+				<div id="checkimg" class="FL colW10" onclick="galleryImg()"><img src="../images/options.png" /></div>
+			</div>
+		</footer>
+		<div id="processboxcover" class="ptfix " style="display: none;width: 100%;height: 100%;top: 0px;">
+
+		</div>
+		<div id="processbox" class="ptfix LH30 t-c bdccc" style="display: none;">
+			<!--<div id="processlist">-->
+			<!--<div class="line-text-d">开始</div>-->
+			<!--<div class="line-text-d" st="4">驳回</div>-->
+			<!--</div>-->
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/mui.zoom.js"></script>
+		<script src="../js/mui.previewimage.js"></script>
+		<script src="../js/template-web.js"></script>
+		<!--<script src="../js/axios.min.js"></script>-->
+		<script src="../js/commonAction.js"></script>
+		<script src="../js/base64.min.js"></script>
+
+		<script>
+			mui.init({
+				swipeBack: true, //启用右滑关闭功能
+				gestureConfig: {
+					longtap: true,
+					hold: true,
+					release: true
+				},
+				beforeback: function() {
+				　　//获得父页面的webview
+					var list = plus.webview.currentWebview().opener();
+				　　//触发父页面的自定义事件(refresh),从而进行刷新
+					mui.fire(list, 'refresh1');
+					//返回true,继续页面关闭逻辑
+					return true;
+				}
+			});
+			function nowDate() {
+				var date = new Date();
+				return date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()+"-"+date.getTime();
+			}
+			if(window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener('plusready', plusReady, false);
+			}
+			if(mui.os.ios){
+					// 解决在ios上fixed元素focusin时位置出现错误的问题 
+					document.addEventListener('DOMContentLoaded',function(){
+						var footerDom = document.querySelector('footer');
+						
+						document.addEventListener('focusin', function() {
+							footerDom.style.position = 'absolute';
+						});
+						document.addEventListener('focusout', function() {
+							footerDom.style.position = 'fixed';
+						});
+					});
+				}
+
+			/*var i = 1,
+				gentry = null,
+				w = null;
+			var hl = null,
+				le = null,
+				de = null,
+				ie = null;
+			var unv = true;
+			var bUpdated = false; //用于兼容可能提前注入导致DOM未解析完更新的问题
+						
+			var pkey = '';
+						
+						
+			var ws = "";*/
+			var self = '';
+			//		var key = '';
+			var types = '';
+			//			var localUrl = '';
+			var equipId = '';
+		mui.previewImage();
+			function plusReady(index) {
+				plus.webview.currentWebview().setStyle({
+					softinputMode: "adjustResize"
+				});
+				var wt = plus.nativeUI.showWaiting();
+				localUrl = plus.storage.getItem('youranLocalUrl');
+				self = plus.webview.currentWebview();
+				taskId = self.key;
+				key = taskId;
+
+//				document.querySelector('#inputtext').addEventListener('focus', function() {
+//					document.body.scrollTop = document.querySelector('.mui-content').scrollHeight;
+//					//					document.querySelector('.list-view-log').scrollTop = 100;
+//					console.log(document.querySelector('.list-view-log').scrollTop)
+//				}, false);
+
+				
+
+				mui('body').on('tap', '.equipHref', function() {
+					var key = this.getAttribute("key"),
+						href = this.getAttribute("href");
+
+					href = localUrl + href + key;
+					var id = href;
+					var options = {
+						styles: {
+							popGesture: "close"
+						},
+						styles: {
+							popGesture: "close"
+						},
+						show: {
+							aniShow: 'pop-in'
+						},
+						waiting: {
+							autoShow: true
+						},
+						extras: {
+							href: href,
+							title: '设备详情',
+							type: '1',
+							equipId: '1'
+						}
+					};
+					//'backTitle.html'
+					mui.openWindow('backTitle.html', id, options);
+					return false;
+				})
+				var p1 = {
+					taskId:taskId
+				};
+				var token=plus.storage.getItem("token")
+				// console.log(JSON.stringify(p1))
+				// console.log(token)
+				mui.ajax(localUrl + '/api/task/detail', {
+					data: p1,
+					dataType: 'json',
+					type: 'get',
+					beforeSend: function (XMLHttpRequest){
+						XMLHttpRequest.setRequestHeader("Authorization", token);
+					},
+					success: function(data) {
+						// console.log(data)
+						if(data.code === '0') {
+							wt.close();
+							if (!isNaN(Number(index))&&types===1){
+								// document.getElementById("selectedEquip").innerText=data.data.equipDetail[index].equipName
+								document.getElementById("xjEquipPosition").innerText=data.data.equipDetail[index].position
+								document.getElementById("xjEquipIsStop").innerHTML=
+									`<p class="FL  "><img class="list-detail-img" src="../images/img_left_stop.png" /></p>
+									<p class="FL pd-lr5">是否停机: </p>
+									<p class="FL pd-lr5">
+										${data.data.equipDetail[index].isStop===1?"是":"否"}
+									</p>`
+								var methods=[];
+								for (var i=0;i<data.data.equipDetail[index].executeMethods.length;i++){
+									methods.push(data.data.equipDetail[index].executeMethods[i].name)
+								}
+								document.getElementById("xjEquipExecuteMethods").innerHTML=
+									`<p class="FL  "><img width="12px" height="100%" src="../images/img_left_maintain_type.png" /></p>
+									<p class="FL pd-lr5">巡检方式: </p>
+									<p class="FL pd-lr5">
+										${methods}
+									</p>`
+								document.getElementById("xjEquipExecuteStandards").innerHTML=
+									`<p class="FL  "><img width="14px" height="100%" src="../images/img_left_standard.png" /></p>
+									<p class="FL pd-lr5">巡检标准: </p>
+									<p class="FL pd-lr5">
+										${data.data.equipDetail[index].executeStandards}
+									</p>`
+								document.getElementById("xjEquipExecuteSteps").innerHTML=
+									`<p class="FL  "><img width="12px" height="100%" src="../images/img_left_maintain_project.png" /></p>
+									<p class="FL pd-lr5">巡检步骤: </p>
+									<p class="FL pd-lr5">
+										${data.data.equipDetail[index].executeSteps}
+									</p>`
+								document.getElementById("xjEquipSafetyMeasures").innerHTML=
+									`<p class="FL  "><img class="list-detail-img" src="../images/img_left_can.png" /></p>
+									<p class="FL pd-lr5">安全措施: </p>
+									<p class="FL pd-lr5">
+										${data.data.equipDetail[index].safetyMeasures}
+									</p>`	
+							}
+							else{
+								chuliData(data.data);
+							}
+						} else {
+							wt.close();
+							mui.toast('数据加载失败');
+						}
+					},
+					error: function(err) {
+						console.log(err);
+					}
+				});
+
+				function chuliData(data) {
+					// console.log(data)
+					var localUrl = plus.storage.getItem('youranLocalUrl');
+					//console.log(data.creator.cname);
+					types = data.taskDetail.taskType.code;
+					if(types == 1) {
+						document.getElementById('title').innerText = "任务详情";
+					}
+					if(types == 2) {
+						document.getElementById('title').innerText = "任务详情";
+					}
+					if(types == 3) {
+						document.getElementById('title').innerText = "任务详情";
+					}
+
+					//if(types == 2) document.getElementById('son-list').style.display = 'block';
+
+					var html = template("header", data);
+					document.getElementById('headers-card').innerHTML = html
+
+					if(types == 1) {
+						data['type']=1
+						html = template("content-inspectType-ls", data);
+						document.getElementById('content-card').innerHTML = html
+					} else if(types == 3) {
+						data['type']=3
+						data.localUrl = localUrl;
+
+						html = template("content-inspectType-wx", data);
+						document.getElementById('content-card').innerHTML = html
+					} else if(types == 2) {
+						data['type']=2
+						html = template("content-inspectType-ls", data);
+						document.getElementById('content-card').innerHTML = html
+					}
+					// console.log(data)
+					data.reports.map(function(v, k) {
+						v.localUrl = localUrl;
+						if(v.op == '9') {
+							var len = data.sparelist.length;
+							for(var i = 0; i < len; i++) {
+								if(v.content == data.sparelist[i].id) {
+									v.unit = data.sparelist[i].unit;
+									v.name = data.sparelist[i].name;
+								}
+							}
+						}
+					})
+
+					html = template("content-list", data);
+					document.getElementById('list-card-con').innerHTML = html
+					if(data.progress == 0 || data.progress == 5) {
+						document.getElementById('inputcontnet_').style.display = 'none';
+					}
+					databefore();
+				}
+
+				// 获取摄像头目录对象
+				plus.io.resolveLocalFileSystemURL('_doc/', function(entry) {
+					entry.getDirectory('camera', {
+						create: true
+					}, function(dir) {
+						gentry = dir;
+					}, function(e) {
+						console.log('Get directory "camera" failed: ' + e.message);
+					});
+				}, function(e) {
+					console.log('Resolve "_doc/" failed: ' + e.message);
+				});
+
+				if(mui.os.ios) {
+					// 解决在ios上fixed元素focusin时位置出现错误的问题 
+					//					document.addEventListener('DOMContentLoaded',function(){
+					//						var footerDom = document.querySelector('footer');
+					//						
+					//						document.addEventListener('focusin', function() {
+					//							footerDom.style.position = 'absolute';
+					//						});
+					//						document.addEventListener('focusout', function() {
+					//							footerDom.style.position = 'fixed';
+					//						});
+					//					});
+				}
+
+				var input = document.getElementById("inputtext");
+
+				input.oninput = function() {
+					if(!input.value) {
+						document.getElementById('wlh-tap').style.display = 'block';
+						//						console.log(document.getElementById('wlh-tap').style.display)
+						document.getElementById('checkimg').style.display = 'block';
+						document.getElementById('sendmsg').style.display = 'none';
+					} else {
+						document.getElementById('wlh-tap').style.display = 'none';
+						document.getElementById('checkimg').style.display = 'none';
+						document.getElementById('sendmsg').style.display = 'block';
+					}
+				}
+
+				document.getElementById('sendmsg').onclick = function() {
+					document.getElementById('wlh-tap').style.display = 'block';
+					document.getElementById('checkimg').style.display = 'block';
+					document.getElementById('sendmsg').style.display = 'none';
+					if(!input.value) {
+						return
+					};
+					addreport(input.value, 0)
+				}
+				//			       
+				// document.getElementById('son-list').onclick = function() {
+				// 	var typesson = 3;
+				// 	var href = "taskSonListBox.html";
+				// 	actionMuiCommon.towebview(href, {
+				// 		types: typesson,
+				// 		keys: key
+				// 	});
+				// }
+
+			}
+
+			var photoDOM = document.querySelector('.photo-album'),
+				sparePartDOM = document.querySelector('.spare-part');
+			photoDOM.addEventListener('tap', photoAlbum);
+			sparePartDOM.addEventListener('tap', sparePart);
+
+			function galleryImg() {
+
+				mui('#popover').popover('show');
+
+			}
+
+			//调取备件
+			function sparePart() {
+				mui('#popover').popover('hide');
+
+				mui.openWindow({
+					url: './backTitle.html',
+					id: 'detailSpareList',
+					styles: {
+						popGesture: "close"
+					},
+					extras: {
+						type: key,
+						title: '请点击选择',
+						href: '../spareList.html',
+						//equipId: equipId
+					}
+				});
+			}
+
+			//调取相册
+			function photoAlbum() {
+				mui('#popover').popover('hide');
+				//				// 从相册中选择图片
+				console.log("从相册中选择图片:");
+				plus.gallery.pick(function(path) {
+					createItem(path, 1, "", "");
+				}, function(e) {
+					console.log("取消选择图片");
+				}, {
+					filter: "image"
+				});
+			}
+
+			// 拍照
+			function getImage() {
+				console.log('开始拍照：');
+				var cmr = plus.camera.getCamera();
+				cmr.captureImage(function(p) {
+					console.log('成功：' + p);
+
+					plus.io.resolveLocalFileSystemURL(p, function(entry) {
+						compressImage(entry.toLocalURL());
+						// createItem(entry.toLocalURL(), 1, "", "");
+					}, function(e) {
+						console.log('读取拍照文件错误：' + e.message);
+					});
+				}, function(e) {
+					console.log('失败：' + e.message);
+				}, {
+					filename: '_doc/camera/',
+					index: 1
+				});
+			}
+
+			function createItem(url, type, txt, size) {
+				if(type == 1) //上传图片
+				{
+					var wt = plus.nativeUI.showWaiting();
+					var task = plus.uploader.createUpload(localUrl + '/api/upload/picture',{
+						method:"POST"},
+						function(t, status) {
+							if(status == 200) {//上传完成
+								plus.nativeUI.closeWaiting()
+								var result = JSON.parse(t.responseText)
+								if(result.code == 0) {
+									// console.log(JSON.stringify(result))
+									addreport(result, type, txt)
+								} else {mui.alert('请求错误！');}
+								wt.close(); //关闭等待提示按钮
+							} else {
+								alert("上传失败：" + status);
+								wt.close(); //关闭等待提示按钮
+							}
+						},
+						function(err) {
+							alert(err);
+							wt.close()
+						},
+					);
+					task.addFile(url,{key:'file'});
+					task.start();
+				}
+				
+				else if (type==2)//上传语音
+				{
+				res=JSON.parse(txt)
+				wt = plus.nativeUI.showWaiting();
+				var task = plus.uploader.createUpload(
+					localUrl + '/api/upload/attachment', {method:"POST"},
+					function(t, status) {
+						if(status == 200) {//上传完成
+							plus.nativeUI.closeWaiting()
+							var result = JSON.parse(t.responseText)
+							console.log(result)
+							if(result.code == 0) {
+								addreport(result, type, res.result)
+							} else {mui.alert('请求错误！');}
+							wt.close(); //关闭等待提示按钮
+						} else {
+							alert("上传失败：" + status);
+							wt.close(); //关闭等待提示按钮
+						}
+					},
+					function(err) {
+						alert(err);
+					},
+				);
+				//添加其他参数
+				task.addFile(url, {key:"file"});
+				// task.addData("duration", 10);
+				// task.addData("audio_text", res.result);
+				// task.addData("audio_errcode", res.err_msg);
+				console.log(JSON.stringify(task))
+				task.start();	
+					
+				
+				}
+			}
+			//result 为内容
+			//type 代表 0.文字 1.图片 2.语音
+			//txt 为语音内容(不确认)
+			//spareNum为备件数量
+			function addreport(result, type, txt, spareNum) { //				
+				var con = "";
+				var id=0
+				if(type != 0) {
+					con = result.data.name
+					if(result.data.id) id=result.data.id
+					// var mediaName=result.data.name
+				} else {
+					con = result
+				}
+				var uid=plus.storage.getItem('uid')
+				var p1 = {
+					// param: p
+					taskId: Number(key),
+					operation:spareNum?9:8,
+					reportType:type,
+					content:con,
+					attachmentId:id,	//附件ID,需要改成变量
+					num:spareNum?Number(spareNum):0,
+					userId:uid,
+					time:nowDate()
+				}
+				console.log(JSON.stringify(p1))
+				var token=plus.storage.getItem("token")
+				// console.log(JSON.stringify(p1))
+				mui.ajax(localUrl + '/api/task/report/add', {
+					data: p1,
+					dataType: 'json',
+					contentType:'application/json',
+					type: 'post',
+					beforeSend: function (XMLHttpRequest){
+						XMLHttpRequest.setRequestHeader("Authorization", token);
+					},
+					success: function(data) {
+						console.log(data)
+						if(data.code == 0) {
+							if(txt) {
+								commitAudio(id, txt);
+								self = plus.webview.currentWebview();
+								self.reload(true)
+								// wt.close();
+							} else {
+								var wt = plus.nativeUI.showWaiting();
+								wt.close();
+								self = plus.webview.currentWebview();
+								self.reload(true)
+							}
+						} else {
+							var wt = plus.nativeUI.showWaiting();
+							wt.close();
+							mui.toast('请求错误！');
+						}
+					},
+					error: function(err) {
+						console.log(err.responseText)
+					}
+				})
+			}
+
+			//提交翻译后的语音
+			function commitAudio(id, txt) {
+				var p = {
+					id: id,
+					text: txt.toString(),
+					errorcode: '0'
+				}
+				p = Base64.encode(JSON.stringify(p));
+				var p1 = {
+					id: id,
+					text: txt.toString(),
+					errorCode: '0'
+				}
+				var token=plus.storage.getItem("token")
+				mui.ajax(localUrl + '/api/upload/translateText', {
+					data: p1,
+					dataType: 'json',
+					type: 'post',
+					contentType:'application/json',
+					beforeSend: function (XMLHttpRequest){
+						XMLHttpRequest.setRequestHeader("Authorization", token);
+					},
+					success: function(data) {
+						if(data.code == 0) {
+							wt.close();
+							self = plus.webview.currentWebview();
+							self.reload(true)
+						} else {
+							wt.close();
+						}
+					},
+					error: function(err) {
+						wt.close();
+						console.log(err)
+					}
+				})
+			}
+		</script>
+	</body>
+
+</html>
+	<!-- {{if taskDetail.status.code == 0}}
+	<div class="FL colW10 ptrel" style="height: 100%;background-color: #90EE90;">
+		{{else if taskDetail.status.code == 1}}
+		<div class="FL colW10 ptrel" style="height: 100%;background-color: #D2691E;">
+			{{else if taskDetail.status.code == 2}}
+			<div class="FL colW10 ptrel" style="height: 100%;background-color: #CDAD00;">
+				{{/if}}
+				<div class="rwState ptAb t-c" style="width: 100%;top: 40%;">
+					{{if taskDetail.status.code == 0}} 正<br/>常 {{else if taskDetail.status.code == 1}} 预<br/>警 {{else if taskDetail.status.code == 2}} 逾<br/>期 {{/if}}
+				</div>
+			</div> -->
+<script id="header" type="text/html">
+	
+			{{if taskDetail.status}}
+			{{if taskDetail.status.code == 0}}
+			<div class="FL colW10 ptrel" style="height: 100%;background-color: #90EE90;">
+			{{else if taskDetail.status.code == 1}}
+			<div class="FL colW10 ptrel" style="height: 100%;background-color: #D2691E;">
+			{{else if taskDetail.status.code == 2}}
+			<div class="FL colW10 ptrel" style="height: 100%;background-color: #CDAD00;">
+			{{/if}}
+				<div class="rwState ptAb t-c" style="width: 100%;top: 40%;">
+				<p class=" wlh-algin">
+				{{if taskDetail.status.code == 0}} 正<br/>常 
+				{{else if taskDetail.status.code == 1}} 预<br/>警 
+				{{else if taskDetail.status.code == 2}} 逾<br/>期 
+				{{/if}}
+				</p>
+				</div>
+				</div>
+
+			{{/if}}
+
+			<div class="FL colW90">
+				<div class="mui-card-header t-c" style="padding: 0px 6px;overflow: hidden;">
+					<div class="FL colW50 textApostrophe">
+						<!-- <a onclick="showNamePopOver()" id="selectedEquip">{{equipDetail[0].equipName}}</a>
+						<div id="popover1" class="mui-popover">
+							<ul id="selectPopOver" class="mui-table-view">
+								{{each equipDetail}}
+								<li class="mui-table-view-cell"><a href="#" onclick="hidePopOutAndSelect({{$index}})">{{$value.equipName}}</a></li>
+								{{/each}}
+							</ul>
+						</div> -->
+						 <div class="mui-input-row mui-select" >  
+							<select id="selectEquip" onchange="hidePopOutAndSelect(value)">  
+								{{each equipDetail}}
+								<option  class="mui-table-view-cell" value={{$index}}>{{$value.equipName}}</option>
+								{{/each}} 
+							</select>  
+						</div>  
+					</div>
+					<div class="FL colW50 F12" style="margin-top:8px;">
+						{{if isAttention == 0}}
+						<p id="iscares" class="FR mg0 " cares="0" style="width: 22px;"><img id="careimg" src="../images/start.png" /></p>
+						{{else}}
+						<p id="iscares" class="FR mg0 " cares="1" style="width: 22px;"><img id="careimg" src="../images/start-1.png" /></p>
+						{{/if}}
+						<p id="isprocess" class="FR bdCir5 bdccc" ty="{{ taskDetail.progress.code }}" style="margin-right: 5px; padding:2px; line-height: 1.35em;">
+							{{if taskDetail.progress.code == 1}} 未开始 
+							{{else if taskDetail.progress.code == 2}} 进行中 
+							{{else if taskDetail.progress.code == 3}} 暂停 
+							{{else if taskDetail.progress.code == 4}} 完成
+							{{else if taskDetail.progress.code == 5}} 确认 
+							{{else if taskDetail.progress.code == 6}} 确认驳回 
+							{{else if taskDetail.progress.code == ''}} 全部 {{/if}}
+						</p>
+						<!--<p class="FR mg0 F16" style="width: 35%;">{{ objid }}</p>-->
+					</div>
+				</div>
+				<div class="mui-card-content">
+					<div class="mui-card-content-inner" style="padding: 8px 0px;">
+						<div class="FL colW100">
+							<p class="FL colW5 "><img src="../images/user.png" /></p>
+							<p class="FL colW95 pd-l5" style="margin-top:-2px;">
+								{{each taskDetail.actor}} {{$value.name}} {{/each}}
+							</p>
+						</div>
+						<div class="FL colW100">
+							<p class="FL colW5 "><img src="../images/home-2.png" /></p>
+							<p id="xjEquipPosition" class="FL colW95 pd-l5" style="margin-top:-2px;">{{ equipDetail[0].position }}</p>
+						</div>
+						<div class="FL colW100">
+							<p class="FL colW5 "><img src="../images/time.png" /></p>
+							<p class="FL colW95 pd-l5" style="margin-top:-2px;">{{ taskDetail.endDate?taskDetail.endDate:'' }}</p>
+						</div>
+						<div class="FL colW100">
+							<p class="FL colW5 "><img src="../images/time.png" /></p>
+							<p class="FL colW95 pd-l5" style="margin-top:-2px;">{{ taskDetail.actualEndDate?taskDetail.actualEndDate:'' }}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+</script>
+
+<script id="content-inspectType-ls" type="text/html">
+	<ul id="mui-table-view-list" class="mui-table-view">
+		<li class="mui-table-view-cell otherman" ty="1" data-type="reporter" data-title="点击右侧图标完成选择">
+			<p class="FL  "><img width="14px" height="100%" src="../images/img_left_reporter.png" /></p>
+			<p class="FL pd-lr5">确认人:</p>
+			<p id="reporterman" class="FL pd-lr5 ">
+				{{each taskDetail.reporter}} {{ $value.name }} {{/each}}
+			</p>
+		</li>
+		<li class="mui-table-view-cell otherman" ty="0" data-type="actor" data-title="点击选择">
+			<p class="FL  "><img src="../images/user.png" /></p>
+			<p class="FL pd-lr5">执行人:</p>
+			<p id="actorman" class="FL pd-lr5 ">
+				{{each taskDetail.actor}} {{ $value.name }} {{/each}}
+			</p>
+		</li>
+		<li class="mui-table-view-cell otherman" ty="2" data-type="participant" data-title="点击右侧图标完成选择">
+			<p class="FL  "><img width="14px" height="100%" src="../images/img_left_join.png" /></p>
+			<p class="FL pd-lr5">参与人:</p>
+			<p id="participantman" class="FL pd-lr5 ">
+				{{each taskDetail.participant}} {{ $value.name }} {{/each}}
+			</p>
+			<!--<button onclick="" class="btn-wrap">添加</button>-->
+		</li>
+		<li class="mui-table-view-cell">
+			<p class="FL"><img width="14px" height="100%" src="../images/img_left_mode.png" /></p>
+			<p class="FL pd-l5">模式:</p>
+			<p class="FL pd-lr5 ">
+				{{taskDetail.modelName?taskDetail.modelName:'未知'}}
+			</p>
+			<p class="FL pd-l5">级别:</p>
+			<p class="FL pd-lr5">
+				{{taskDetail.level.name?taskDetail.level.name:''}}
+			</p>
+			<p class="FL pd-l5">周期:</p>
+			<p class="FL pd-lr5 ">
+				{{taskDetail.period?taskDetail.period:0}}
+			</p>
+		</li>
+		{{if type===2}}
+		<li class="mui-table-view-cell">
+			<p class="FL"><img width="12px" height="100%" src="../images/img_left_maintain_type.png" /></p>
+			<p class="FL pd-lr5">保养方式:</p>
+			<p class="FL pd-lr5">
+			{{each equipDetail[0].executeMethods}}{{$value.name}};{{/each}}
+			</p>
+		</li>
+		<li class="mui-table-view-cell">
+			<p class="FL"><img width="12px" height="100%" src="../images/img_left_maintain_project.png" /></p>
+			<p class="FL pd-lr5">保养步骤:</p>
+			<p class="FL pd-lr5">
+				{{equipDetail[0].executeSteps}}
+			</p>
+		</li>
+		<li class="mui-table-view-cell">
+			<p class="FL  "><img width="14px" height="100%" src="../images/img_left_standard.png" /></p>
+			<p class="FL pd-lr5">保养标准:</p>
+			<p class="FL pd-lr5">
+				{{equipDetail[0].executeStandards}}
+			</p>
+		</li>
+		{{else if type===1}}
+		<li id="xjEquipIsStop" class="mui-table-view-cell">
+			<p class="FL  "><img class="list-detail-img" src="../images/img_left_stop.png" /></p>
+			<p class="FL pd-lr5">是否停机: </p>
+			<p class="FL pd-lr5">
+				{{if equipDetail[0].isStop===1}}是
+				{{else}}否
+				{{/if}}
+			</p>
+		</li>
+		<li id="xjEquipExecuteMethods" class="mui-table-view-cell">
+			<p class="FL  "><img width="12px" height="100%" src="../images/img_left_maintain_type.png" /></p>
+			<p class="FL pd-lr5">巡检方式: </p>
+			<p class="FL pd-lr5">
+				{{each equipDetail[0].executeMethods}}{{$value.name}};{{/each}}
+			</p>
+		</li>
+		<li id="xjEquipExecuteStandards" class="mui-table-view-cell">
+						
+			<p class="FL  "><img width="14px" height="100%" src="../images/img_left_standard.png" /></p>
+			<p class="FL pd-lr5">巡检标准: </p>
+			<p class="FL pd-lr5">
+				{{equipDetail[0].executeStandards}}
+			</p>
+		</li>
+		<li id="xjEquipExecuteSteps" class="mui-table-view-cell">
+			<p class="FL  "><img width="12px" height="100%" src="../images/img_left_maintain_project.png" /></p>
+			<p class="FL pd-lr5">巡检步骤: </p>
+			<p class="FL pd-lr5">
+				{{equipDetail[0].executeSteps}}
+			</p>
+		</li>
+		<li id="xjEquipSafetyMeasures" class="mui-table-view-cell">
+			<p class="FL  "><img class="list-detail-img" src="../images/img_left_can.png" /></p>
+			<p class="FL pd-lr5">安全措施: </p>
+			<p class="FL pd-lr5">
+				{{equipDetail[0].safetyMeasures}}
+			</p>
+		</li>
+		{{/if}}
+	</ul>
+</script>
+<script id="content-inspectType-wx" type="text/html">
+	<ul id="mui-table-view-list" class="mui-table-view">
+		<li class="mui-table-view-cell otherman" ty="1" data-type="reporter">
+			<p class="FL  "><img class="list-detail-img" width="14px" height="100%" src="../images/img_left_reporter.png" /></p>
+			<p class="FL pd-lr5">确认人:</p>
+			<p id="reporterman" class="FL pd-lr5 ">
+				{{each taskDetail.reporter}} {{ $value.name }} {{/each}}
+			</p>
+		</li>
+		<li class="mui-table-view-cell otherman" ty="0" data-type="actor">
+			<p class="FL  "><img class="list-detail-img" src="../images/user.png" /></p>
+			<p class="FL pd-lr5">执行人:</p>
+			<p id="actorman" class="FL pd-lr5 ">
+				{{each taskDetail.actor}} {{ $value.name }} {{/each}}
+			</p>
+		</li>
+		<li class="mui-table-view-cell otherman" ty="2" data-type="participant">
+			<p class="FL  "><img class="list-detail-img" width="14px" height="100%" src="../images/img_left_join.png" /></p>
+			<p class="FL pd-lr5">参与人:</p>
+			<p id="participantman" class="FL pd-lr5 ">
+				{{each taskDetail.participant}} {{ $value.name }} {{/each}}
+			</p>
+		</li>
+		<li class="mui-table-view-cell">
+			<p class="FL  "><img class="list-detail-img" src="../images/img_left_des.png" /></p>
+			<p class="FL pd-lr5">故障描述:</p>
+			<p class="FL pd-lr5">{{equipDetail[0].faultDescription}}</p>
+
+		</li>
+		<li class="mui-table-view-cell">
+			<p class="FL  "><img class="list-detail-img" src="../images/img_left_stop.png" /></p>
+			<p class="FL pd-lr5">是否停机:</p>
+			<p class="FL pd-lr5">
+				{{if equipDetail[0].isStop == 0}} 否 {{else if equipDetail[0].isStop == 1}} 是 {{/if}}
+			</p>
+		</li>
+		<li class="mui-table-view-cell">
+			<p class="FL  "><img class="list-detail-img wang" src="../images/img_left_method.png" /></p>
+			<p class="FL pd-l5">维修方法: </p>
+			<p class="FL pd-lr5">
+				{{equipDetail[0].repairMethod}}
+			</p>
+		</li>
+
+		<li class="mui-table-view-cell">
+			<p class="FL  "><img class="list-detail-img" src="../images/img_left_can.png" /></p>
+			<p class="FL pd-lr5">可能原因:</p>
+			<p class="FL pd-lr5">
+				{{equipDetail[0].reason}}
+			</p>
+		</li>
+		<li class="mui-table-view-cell">
+			<p class="FL  "><img class="list-detail-img" src="../images/img_left_can.png" /></p>
+			<p class="FL pd-lr5">安全措施:</p>
+			<p class="FL pd-lr5">
+				{{equipDetail[0].safetyMeasures}}
+			</p>
+		</li>
+	</ul>
+</script>
+<!-- 	{{if $value.op == 1}} 创建了任务 
+{{else if $value.op == 2}} 开始了任务
+{{else if $value.op == 4}} 完成 
+{{else if $value.op == 5}} 确认
+{{else if $value.op == 6}} 驳回 
+{{else if $value.op == 3}} 暂停 
+{{else if $value.op == 7}} 更改任务人 
+{{else if $value.operationType == 8}} 工作报告
+ -->
+<script id="content-list" type="text/html">
+	{{each reports}} {{if $value.operationType.code != 8}}
+	<div class="mui-card wlh-drag" style="" data-id="{{$value.workReportId}}">
+		<div class="worklog FL colW20 t-c" style="height: 100%;">
+			<img src="../images/user-1.png" />
+		</div>
+		<div class="FL colW80" style="margin-bottom: 10px;">
+			<div class="mui-card-header t-c">
+				<p class="FL mg0 colW30 t-l textApostrophe F18">{{ $value.creator }}</p>
+				<p class="FR mg0 colW100 F16">{{ $value.createTime }}</p>
+			</div>
+			<div class="mui-card-content">
+				<div class="mui-card-content-inner">
+					<div class="FL colW100">
+							{{if $value.operationType.code == 9}} 更换{{$value.num}}{{$value.unit}}{{$value.partName}} 
+							{{else if $value.operationType.code == 1}} 创建了任务 
+							{{else if $value.operationType.code == 2}} 开始了任务
+							{{else if $value.operationType.code == 4}} 完成 
+							{{else if $value.operationType.code == 5}} 确认
+							{{else if $value.operationType.code == 6}} 驳回 
+							{{else if $value.operationType.code == 3}} 暂停 
+							{{else if $value.operationType.code == 7}} 更改任务人 
+							{{/if}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{{else if $value.operationType.code == 8 && $value.reportType.code == 0 }}
+	<div class="mui-card wlh-drag" style="" data-id="{{$value.workReportId}}">
+		<div class="worklog FL colW20 t-c" style="height: 100%;">
+			<img src="../images/user-1.png" />
+		</div>
+		<div class="FL colW80" style="margin-bottom: 10px;">
+			<div class="mui-card-header t-c">
+				<p class="FL mg0 colW30 t-l textApostrophe F18">{{ $value.creator }}</p>
+				<p class="FR mg0 colW100 F16">{{ $value.createTime }}</p>
+			</div>
+			<div class="mui-card-content">
+				<div class="mui-card-content-inner">
+					<div class="FL colW100">
+						{{if $value.content.length<25}}
+							{{$value.content}}
+						{{else}}
+							{{each $value.content}}
+									{{$value}}
+							{{/each}}
+							
+						{{/if}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{{else if $value.operationType.code == 8 && $value.reportType.code == 1 }}
+	<div class="mui-card wlh-drag" style="" data-id="{{$value.workReportId}}">
+		<div class="worklog FL colW20 t-c" style="height: 100%;">
+			<img src="../images/user-1.png" />
+		</div>
+		<div class="FL colW80" style="margin-bottom: 10px;">
+			<div class="mui-card-header t-c">
+
+				<p class="FL mg0 colW30 t-l textApostrophe F18">{{ $value.creator }}</p>
+				<p class="FR mg0 colW100 F16">{{ $value.createTime }}</p>
+			</div>
+			<div class="mui-card-content">
+				<div class="mui-card-content-inner">
+					<div class="FL colW100">
+						上传了图片
+					</div>
+					<div class="FL colW100">
+						<img style="width: 100%;" data-preview-src="" data-preview-group="1" src="http://192.168.129.76:8092/images/{{ $value.attachmentUrl }}" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{{else if $value.operationType.code == 8 && $value.reportType.code == 2 }}
+	<div class="mui-card wlh-drag" style="" data-id="{{$value.workReportId}}">
+		<div class="worklog FL colW20 t-c" style="height: 100%;">
+			<img src="../images/user-1.png" />
+		</div>
+		<div class="FL colW80" style="margin-bottom: 10px;">
+			<div class="mui-card-header t-c">
+				<p class="FL mg0 colW30 t-l textApostrophe F18">{{ $value.creator }}</p>
+				<p class="FR mg0 colW100 F16">{{ $value.createTime }}</p>
+			</div>
+			<div class="mui-card-content">
+				<div class="mui-card-content-inner">
+					<div class="FL colW100">
+						上传了语音
+					</div>
+					<!--<audio class="playmp3 " src="http://youran.boloomo.com/multi-media/{{ $value.content }}" controls="controls" style="">-->
+					<audio class="playmp3 " src="http://192.168.129.76:8092/images/{{ $value.attachmentUrl }}" controls="controls" style="width:100%">
+						Your browser does not support the audio element.
+					</audio>
+					<br/>{{$value.audio_text}}
+				</div>
+			</div>
+		</div>
+	</div>
+	{{/if}} {{/each}}
+</script>
+<script>
+	function databefore() {
+		document.getElementById('iscares').onclick = function() {
+			var ty = this.getAttribute('cares');
+			var cgty = 0;
+
+			if(ty == 0) {
+				cgty = 1;
+				this.setAttribute('cares', 1);
+				document.getElementById('careimg').setAttribute('src', "../images/start-1.png");
+			}
+			if(ty == 1) {
+				cgty = 0;
+				this.setAttribute('cares', 0);
+				document.getElementById('careimg').setAttribute('src', "../images/start.png")
+			}
+			var uid=plus.storage.getItem('uid')
+			// var p3 = {
+			// 	taskId: Number(key),
+			// 	isAttention: cgty,
+			// 	userId:uid
+			// }
+			// p3 = Base64.encode(JSON.stringify(p3));
+			var p1 = {
+				taskId: Number(key),
+				isAttention: cgty,
+				userId:uid
+			}
+			// console.log(p1)
+			var token=plus.storage.getItem("token")
+			var wa = plus.nativeUI.showWaiting();
+			//http://192.168.129.216:3000
+			mui.ajax(localUrl + '/api/task/attention', {
+				data: p1,
+				dataType: 'json',
+				contentType:'application/json',
+				beforeSend: function (XMLHttpRequest){
+					XMLHttpRequest.setRequestHeader("Authorization", token);
+				},
+				type: 'post',
+				success: function(data) {
+					// console.log(data)
+					wa.close();
+					if(data.code === '0') {
+						mui.toast('操作成功！');
+					} else {
+						wa.close();
+						mui.alert('请求错误！');
+					}
+				},
+				error: function(err) {
+					wa.close();
+					console.log(err);
+				}
+			})
+		}
+
+		var ty = '';
+		document.getElementById('isprocess').onclick = function(ev) {
+			var l = document.getElementById('iscares').offsetLeft - 20;
+			var t = document.getElementById('iscares').getBoundingClientRect().top + 30;
+			//                  alert(oEvent.screenX+'，'+oEvent.screenY);//   IE浏览器兼容
+			document.getElementById('processbox').style.left = l + "px";
+			document.getElementById('processbox').style.top = t + "px";
+
+			ty = this.getAttribute('ty');
+			var htmls = '';
+			if(ty == '2') {
+				htmls = '<div class="line-text-d" st="3">暂停</div>' +
+					'<div class="line-text-d" st="4">完成</div>';
+			}
+			if(ty == '1' || ty == '3' || ty == '6') {
+				htmls = '<div class="line-text-d" st="2">开始</div>';
+			}
+			if(ty == '4') {
+				htmls = '<div class="line-text-d" st="5">确认</div>' +
+					'<div class="line-text-d" st="6">驳回</div>';
+			}
+
+			if(!htmls) return
+			document.getElementById('processbox').innerHTML = htmls;
+			document.getElementById('processbox').style.display = 'block';
+			document.getElementById('processboxcover').style.display = 'block';
+		};
+		document.getElementById('processboxcover').onclick = function() {
+			document.getElementById('processbox').style.display = 'none';
+			document.getElementById('processboxcover').style.display = 'none';
+		}
+		//	更改任务进度
+		mui('#processbox').on('tap', 'div', function(e) {
+			var st = this.getAttribute('st');
+			var txt = this.innerText;
+			//			console.log(txt);
+			document.getElementById('processbox').style.display = 'none';
+			document.getElementById('processboxcover').style.display = 'none';
+			var dt = actionMuiCommon.gettodayDate(true);
+			var uid=plus.storage.getItem('uid')
+			var p4 = {
+				taskId: Number(key),
+				progress: parseInt(st),
+				userId:uid,
+				operationType:parseInt(st),
+				reportType:0
+			}
+			// console.log(p4);
+			p4 = Base64.encode(JSON.stringify(p4));
+			var p1_ = {
+				cmd: 0x03,
+				// param: p4
+				taskId: Number(key),
+				progress: parseInt(st),
+				userId:uid,
+				operationType:parseInt(st),
+				reportType:0,
+				time:nowDate()
+			}
+			var token=plus.storage.getItem("token")
+			var wt = plus.nativeUI.showWaiting();
+			mui.ajax(localUrl + '/api/task/updateProgress?', {
+				data: p1_,
+				dataType: 'json',
+				type: 'post',
+				contentType:'application/json',
+				beforeSend: function (XMLHttpRequest){
+					XMLHttpRequest.setRequestHeader("Authorization", token);
+				},
+				success: function(data) {
+					// console.log(data)
+					wt.close();
+					if(data.code == 0) {
+						
+						mui.toast('操作成功！');
+						if(txt == "开始") txt = '进行中';
+						document.getElementById('isprocess').innerText = txt;
+						document.getElementById('isprocess').setAttribute('ty', st);
+
+						if(st == '5') {
+							document.getElementById('inputcontnet_').style.display = 'none';
+						} else {
+							document.getElementById('inputcontnet_').style.display = 'block';
+						}
+						self = plus.webview.currentWebview();
+						// addReportByType(parseInt(st))
+						self.reload(true)
+					}
+				},
+				error: function(err) {
+					wt.close();
+					console.log(err.response)
+				}
+			})
+			// getDetailData()
+		});
+
+		mui('#mui-table-view-list').on('tap', 'li', function(e) {
+			var acty = this.getAttribute('data-type'),
+				selectTitle = this.getAttribute('data-title');
+			if(!acty) return;
+			var url = '../addressBook.html';
+			actionMuiCommon.towebview('backTitle.html', {
+				type: acty,
+				title: selectTitle,
+				href: url,
+				equipId: equipId
+			});
+		});
+	};
+
+	function addactor() {
+		document.getElementById('actorman').innerText = plus.storage.getItem('msaOrgName');
+	}
+
+	function reportor() {
+		document.getElementById('reporterman').innerText = plus.storage.getItem('msaOrgName');
+	}
+
+	function cyr() {
+		document.getElementById('participantman').innerText = plus.storage.getItem('msaOrgName');
+	}
+</script>
+<script>
+	var wlhTap = document.querySelector('#wlh-tap'), //录音图标
+		audioPath = '',
+		ri = null, //定时器
+		audioIsSave = true;
+
+	//点击播放
+	//	wlhPlay.addEventListener('tap', function() {
+	//		player();
+	//	})
+
+	//图标拖动
+	wlhTap.addEventListener('drag', function(e) {
+		this.style = 'transform:scale(3,3);background:red;'
+		document.querySelector('.disNone').style.display = "none";
+		var dragX = e.detail.deltaX;
+
+		if(dragX < 0) {
+			this.style = 'right:' + -dragX + 'px;transform:scale(3,3);background:red;';
+		}
+
+	})
+
+	//拖动结束
+	wlhTap.addEventListener('dragend', function(e) {
+		document.querySelector('.disNone').style.display = "inline-block";
+		this.style = 'right:0;transform:scale(1,1);background:transparent;';
+		if(e.detail.deltaX < -10) {
+			audioIsSave = false;
+			stopRecord();
+
+			//						wlhTap.trigger('dragend')
+		}
+	})
+
+	//按住事件
+	wlhTap.addEventListener('hold', function() {
+		plus.device.vibrate(500);
+		document.querySelector('.disNone').style.display = "none";
+		this.style = 'transform:scale(3,3);background:red;'
+		startRecord();
+		var t = 0;
+		document.querySelector('.wlh-time').innerHTML = timeToStr(t);
+
+		ri = setInterval(function() {
+			t++;
+			document.querySelector('.wlh-time').innerHTML = timeToStr(t);
+
+		}, 1000)
+
+	})
+
+	//松开结束
+	wlhTap.addEventListener('release', function() {
+		this.style = 'transform:scale(1,1);background: transparent;';
+		document.querySelector('.disNone').style.display = "inline-block";
+
+		clearInterval(ri);
+		ri = null;
+		document.querySelector('.wlh-time').innerHTML = '';
+		//		document.querySelector('.wlh-time').style = 'display:none';
+		audioIsSave = true;
+		stopRecord()
+
+	})
+
+	//转换成00：00：00字符串
+	function timeToStr(ts) {
+		if(isNaN(ts)) {
+			return "--:--:--";
+		}
+		var h = parseInt(ts / 3600);
+		var m = parseInt((ts % 3600) / 60);
+		var s = parseInt(ts % 60);
+		return(ultZeroize(h) + ":" + ultZeroize(m) + ":" + ultZeroize(s));
+	};
+
+	//加零
+	function ultZeroize(v, l) {
+		var z = "";
+		l = l || 2;
+		v = String(v);
+		for(var i = 0; i < l - v.length; i++) {
+			z += "0";
+		}
+		return z + v;
+	};
+
+	// 扩展API加载完毕后调用onPlusReady回调函数 
+	document.addEventListener("plusready", onPlusReady, false);
+	var r = null;
+	// 扩展API加载完毕，现在可以正常调用扩展API 
+	function onPlusReady() {
+		r = plus.audio.getRecorder();
+	}
+
+	//开始录音
+	function startRecord() {
+
+		if(r == null) {
+			alert("Device not ready!");
+			return;
+		}
+		r.record({
+			filename: "_doc/",
+			format: 'wav'
+			//			format: 'amr'
+		}, function(a) {
+			if(audioIsSave) {
+				wt = plus.nativeUI.showWaiting();
+				audioFormat(a); //转换格式请求语音识别
+			} else {
+				mui.alert("录音已取消");
+			}
+		}, function(e) {
+			alert("Audio record failed: " + e.message);
+		});
+	}
+
+	//停止录音
+	function stopRecord() {
+		r.stop();
+	}
+
+	function player() { //播放音乐 
+		s = plus.audio.createPlayer(audioPath);
+		var num = s.getDuration(); //获取音频总长度number 
+		setTimeout(function() { //延时获取，否则可能没有返回长度 
+			var num = s.getDuration();
+			//			alert(num)
+
+		}, 100)
+
+		s.play(function() { //播放完成回调 
+			alert("Audio play success!");
+		}, function(e) { //失败回调 
+			alert("Audio play error: " + e.message);
+		});
+	}
+
+	//语音读取转换成BASE64格式
+	function audioFormat(path) {
+		plus.io.requestFileSystem(plus.io.PRIVATE_DOC, function(fs) {
+			var rootEntry = fs.root;
+			var reader = null;
+			var newPath = '';
+
+			if(plus.device.vendor == 'Apple') {
+				newPath = path.slice(5)
+			} else {
+				newPath = path
+			}
+
+			rootEntry.getFile(newPath, {}, function(entry) {
+
+					entry.file(function(file) {
+							reader = new plus.io.FileReader();
+							reader.onloadend = function(e) {
+								//							var audioAddress = plus.io.convertLocalFileSystemURL(path); //绝对路径							
+								//请求百度token
+								reqBaiduApi(e.target.result, file.size, path);
+							};
+							reader.readAsDataURL(file);
+						},
+						function(e) {
+							alert(e.message);
+						});
+				},
+				function(e) {
+					alert(JSON.stringify(e));
+				});
+		}, function(err) {
+			alert('读取错误：' + err);
+		});
+	}
+
+	/*
+	 * @param: data[string] BASE64格式文件
+	 * @parma: len[number]  文件大小，单位字节
+	 * @param: audioAddress[string] 文件绝对路径（上传使用）
+	 * */
+	//请求百度语音识别api获取token权限
+	function reqBaiduApi(data, len, audioAddress) {
+		mui.ajax('https://openapi.baidu.com/oauth/2.0/token?grant_type=client_credentials&client_id=KxyayZyXn4BPCssiQxIoojqWyH2qMxf3&client_secret=ixj2zOnoSMujCHw7GFWpdvtDX5LUhPQu', {
+			dataType: 'json',
+			type: 'get',
+			//headers:{'Content-Type':'application/json'},
+			success: function(res) {
+				reqToken(res.access_token, data, len, audioAddress)
+			},
+			error: function(err) {
+				console.log(err)
+			}
+		})
+	}
+
+	/*
+	 * @param: data[string] BASE64格式文件
+	 * @param: token[string] 获取到的token值
+	 * @param: len[number] 音频文件大小（字节）
+	 * @param: audioAddress[string] 文件绝对路径（上传使用）
+	 * */
+	//利用token上传文件base64格式获取翻译后的文字
+	function reqToken(token, data, len, audioAddress) {
+		var newSpeech = data.slice(data.indexOf(',') + 1);
+		var newIMEI = plus.device.uuid.split(',');
+		// console.log(token)
+		// console.log(newSpeech)
+		mui.ajax('http://vop.baidu.com/server_api', {
+			data: {
+				//				"format": "amr",
+				"format": "wav",
+				"rate": 8000, 
+				"channel": 1,
+				"token": token,
+				// cuid:"B7DBE96F-69FD-42E8-8DC4-76577EA7B69A",
+				"cuid": newIMEI[0],
+				"lan": "zh",
+				"speech": newSpeech,
+				"len": len
+			},
+			contentType: "application/json",
+			dataType: 'json',
+			type: 'post',
+			success: function(res) {
+				// alert("后台")
+				console.log("res"+JSON.stringify(res))
+				if(res.err_no === 0) {
+					// alert("成功")
+					resStr=JSON.stringify(res)
+					createItem(audioAddress, 2, resStr, len); //上传文件	
+					// console.log("audioAddress: "+audioAddress)
+					// console.log(JSON.stringify(res.result[0]))
+					// console.log("len"+len)
+				} else if(res.err_no === 3309) {
+					mui.toast('语音时间过长');
+				} else if(res.err_no === 3301) {
+					mui.toast('音频质量过差');
+				}
+				else{ mui.toast("未知错误")}
+				wt.close();
+			},
+			error: function(err) {
+				alert("出错")
+				console.log(err)
+				wt.close()
+			}
+		})
+	}
+
+	//图片压缩
+	function compressImage(url) {
+		// console.log(url);
+		var filename = url.substring(url.lastIndexOf('/') + 1);
+		plus.zip.compressImage({
+			src: url,
+			dst: '_doc/camera/' + filename, 
+			overwrite: true,
+			quality: 80
+		}, function(img) {
+			createItem(img.target, 1, "", "");
+		}, function(e) {
+			console.log(e);
+		})
+	}
+
+	function pause() { //暂停播放 
+		s.pause();
+	}
+
+	function resume() { //恢复播放 
+		s.resume();
+	}
+
+	function seekTo() { //调到指定位置
+		s.seekTo(100);
+	}
+
+	var text = null;
+
+	function startRecognize() {
+		var options = {};
+		options.engine = 'iFly';
+		//				options.userInterface = 'false';
+		text = "";
+		//				alert( "开始语音识别：" );
+		plus.speech.startRecognize(options, function(s) {
+			text += s;
+			alert(s)
+		}, function(e) {
+			alert("语音识别失败：" + e.message);
+		});
+	}
+
+	//交互
+	function addSpare(data, id) {
+		var data = data.split(',');
+
+		addreport(data[1], 0, null, data[0])
+		//		alert(data)
+	}
+
+	//交互
+	function allPerson(data) {
+		var actorMan = document.querySelector('#actorman'),
+			obj = JSON.parse(data),
+			arr = [];
+		for(i in obj) {
+			if(i !== 'type') {
+				arr.push(Number(obj[i].id));
+			}
+		}
+		if(obj.type === 'reporter') { //报告人
+			editMan(arr, 1);
+		} else if(obj.type === 'participant') { // 参与人
+			editMan(arr, 2)
+		}
+
+	}
+
+	function actorPerson(data) {
+		var actorMan = document.querySelector('#actorman'),
+			manName = data.split(',')[0],
+			manId = data.split(',')[1];
+		actorMan.innerHTML = manName;
+		editMan([Number(manId)], 0);
+	}
+
+	function editMan(id, type) {
+		var uid=plus.storage.getItem('uid')
+		var p1 = {
+			taskId: Number(taskId),
+			personType: type,
+			person: id,
+			userId:uid
+		};
+		var token=plus.storage.getItem("token")
+		console.log(JSON.stringify(p1))
+		mui.ajax(localUrl + '/api/task/updatePerson', {
+			data: p1,
+			dataType: 'json',
+			beforeSend: function (XMLHttpRequest){
+				XMLHttpRequest.setRequestHeader("Authorization", token);
+			},
+			contentType:'application/json',
+			type: 'post',
+			success: function(data) { 
+				// console.log(data)
+				if(data.code === '0') {
+					mui.toast('修改成功');
+					self = plus.webview.currentWebview();
+					self.reload(true);
+
+				} else {
+					mui.toast('修改失败');
+				}
+			},
+			error: function(err) {
+				mui.toast('修改失败');
+				console.log(err);
+			}
+		});
+	}
+
+	function nowDate() {
+		var date = new Date();
+		return date.getFullYear() + "-" + addZero(date.getMonth() + 1) + "-" + addZero(date.getDate()) + ' ' + addZero(date.getHours()) + ':' + addZero(date.getMinutes()) + ':' +
+			addZero(date.getSeconds());
+	}
+
+	function addZero(e) {
+		if(e > 9) {
+			return e;
+		} else if(e < 10) {
+			return '0' + e;
+		}
+	}
+
+	delWork();
+
+	//拖动删除
+	function delWork() {
+		mui('body').on('drag', '.wlh-drag', function(e) {
+			var id = this.getAttribute('data-id');
+			var dragX = e.detail.deltaX;
+			if(dragX < 0) {
+				this.style = 'transform:translate(' + dragX + 'px,0)';
+			}
+		})
+		mui('body').on('dragend', '.wlh-drag', function(e) {
+			var id = this.getAttribute('data-id'),
+				bodyWidth = document.body.clientWidth * 0.8,
+				dragX = e.detail.deltaX;
+
+			if(-dragX > bodyWidth / 2) {
+				animation(dragX, this, bodyWidth, -10);
+				var _self = this;
+				mui.confirm('是否删除这条日志', '删除日志', ['确认', '取消'], function(e) {
+					if(e.index === 1) {
+						animation(dragX, _self, bodyWidth, 10);
+					} else if(e.index === 0) { //确认
+						delWorkAjax(id, _self);
+					}
+				});
+			} else {
+				animation(dragX, this, bodyWidth, 10);
+			}
+		})
+	}
+
+	function animation(index, dom, width, x) {
+		requestAnimationFrame(function() {
+
+			index += x;
+			dom.style = 'transform:translate(' + index + 'px,0)';
+			if(index > -width / 0.8 && x < 0) {
+				animation(index, dom, width, x);
+			} else if(index <= 0 && x > 0) {
+				animation(index, dom, width, x);
+			} else if(index >= 0 && x > 0) {
+				dom.style = 'transform:translate(0px,0)';
+			}
+		})
+	}
+
+	function delWorkAjax(id, _self) {
+		var uid=plus.storage.getItem('uid')
+		var p = {
+			userId: uid,
+			reportId: id
+		};
+		p = Base64.encode(JSON.stringify(p));
+		var p1 = {
+			userId: uid,
+			reportId: id
+		};
+		var token=plus.storage.getItem("token")
+		// console.log(JSON.stringify(p1))
+		mui.ajax(localUrl + '/api/task/report/delete', {
+			data: p1,
+			dataType: 'json',
+			beforeSend: function (XMLHttpRequest){
+				XMLHttpRequest.setRequestHeader("Authorization", token);
+			},
+			type: 'post',
+			contentType:'application/json',
+			success: function(data) {
+				// console.log(JSON.stringify(data))
+				if(data.code === '0') {
+					mui.toast('删除成功');
+					_self.remove();
+					// self.reload(true)
+				} else {
+					mui.toast('删除失败');
+					self.reload(true)
+					
+				}
+			},
+			error: function(err) {
+				mui.toast('删除失败');
+				console.log("err: "+JSON.stringify(err));
+			}
+		});
+	}
+	//处理选择多项巡查任务情况
+	// var parentWebview = null;
+	// mui("selectPopOver").on('tap', 'li a', function() {
+	// 	mui('#topPopover').popover('toggle');
+	// 	if(parentWebview == null) {
+	// 		parentWebview = plus.webview.currentWebview().opener();
+	// 	}
+	// 	var s = this.innerText;
+	// 	var keepState = this.getAttribute('types');
+	// 	parentWebview.evalJS("changepoptxt()");
+	// 	
+	// })
+	function hidePopOutAndSelect(index){
+		// mui('#popover1').popover('hide');
+		// console.log("popOverClick")
+		// console.log(index)
+		// document.getElementById("selectedEquip").innerText=""
+		plusReady(index)
+	}
+	// function showNamePopOver(){
+	// 	mui('#popover1').popover('show');
+	// }
+	
+	// function getDetailData(){
+	// 	var p1 = {
+	// 		cmd: 0x02,
+	// 		// param: p,
+	// 		taskId:taskId
+	// 	};
+	// 	mui.ajax(localUrl + '/api/task/detail', {
+	// 		data: p1,
+	// 		dataType: 'json',
+	// 		type: 'get',
+	// 		success: function(data) {
+	// 			console.log(data)
+	// 		}})
+	// }
+	// 
+	// 
+	// function addReportByType(operationType) { //				
+	// 	var con = "";
+	// 	var uid=plus.storage.getItem('uid')
+	// 	var p1 = {
+	// 		"cmd": 0x06,
+	// 		// param: p
+	// 		taskId: Number(key),
+	// 		operation:operationType,
+	// 		reportType:0,
+	// 		content:con,
+	// 		attachmentId:0,	//附件ID,需要改成变量
+	// 		num:0,
+	// 		userId:uid
+	// 	}
+	// 	mui.ajax(localUrl + '/api/task/report/add', {
+	// 		data: p1,
+	// 		dataType: 'json',
+	// 		contentType:'application/json',
+	// 		type: 'post',
+	// 		success: function(data) {
+	// 			console.log(data)
+	// 			if(data.code == 0) {
+	// 				var wt = plus.nativeUI.showWaiting();
+	// 				wt.close();
+	// 				self = plus.webview.currentWebview();
+	// 				// self.reload(true)
+	// 			} else {
+	// 				mui.toast('请求错误！');
+	// 			}
+	// 		},
+	// 		error: function(err) {
+	// 			console.log(err)
+	// 		}
+	// 	})
+	// }
+	// 
+	// 
+	// 
+	
+</script>
